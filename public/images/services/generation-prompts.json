@@ -1,0 +1,21 @@
+{
+  "tool": "built-in image_gen",
+  "assets": [
+    {
+      "file": "brand-approval.webp",
+      "prompt": "Use case: stylized-concept. Asset type: professional wholesale ecommerce services website card illustration. A refined navy document folder and white approval certificate with an embossed cyan checkmark seal, a small elegant shield, on a low round plinth. Premium polished 3D editorial still life, matte porcelain and softly frosted glass materials, navy #02276B and cyan #00C2F7 accents, very pale ice-blue studio background, soft realistic ambient shadows, restrained business aesthetic. Landscape 3:2 composition, centered subject with generous breathing room, keep all objects in central 75% for responsive cropping. No people, no text, no letters, no numbers, no logos, no watermark."
+    },
+    {
+      "file": "store-management.webp",
+      "prompt": "Use case: stylized-concept. Asset type: professional wholesale ecommerce services website card illustration. A refined desktop monitor with abstract inventory dashboard blocks, three small unbranded shipping boxes and a navy warehouse shelf, on a low round plinth. Premium polished 3D editorial still life, matte porcelain and softly frosted glass materials, navy #02276B and cyan #00C2F7 accents, very pale ice-blue studio background, soft realistic ambient shadows, restrained business aesthetic. Landscape 3:2 composition, centered subject with generous breathing room, keep all objects in central 75% for responsive cropping. No people, no text, no letters, no numbers, no logos, no watermark."
+    },
+    {
+      "file": "product-research.webp",
+      "prompt": "Use case: stylized-concept. Asset type: professional wholesale ecommerce services website card illustration. A refined transparent cyan magnifying glass examining an unbranded small product box, with a navy analytics panel containing a simple rising bar chart, on a low round plinth. Premium polished 3D editorial still life, matte porcelain and softly frosted glass materials, navy #02276B and cyan #00C2F7 accents, very pale ice-blue studio background, soft realistic ambient shadows, restrained business aesthetic. Landscape 3:2 composition, centered subject with generous breathing room, keep all objects in central 75% for responsive cropping. No people, no text, no letters, no numbers, no logos, no watermark."
+    },
+    {
+      "file": "reseller-store-setup.webp",
+      "prompt": "Use case: stylized-concept. Asset type: professional wholesale ecommerce services website card illustration. A refined miniature online storefront with navy and white awning, small product boxes and an embossed cyan verification shield, on a low round plinth. Premium polished 3D editorial still life, matte porcelain and softly frosted glass materials, navy #02276B and cyan #00C2F7 accents, very pale ice-blue studio background, soft realistic ambient shadows, restrained business aesthetic. Landscape 3:2 composition, centered subject with generous breathing room, keep all objects in central 75% for responsive cropping. No people, no text, no letters, no numbers, no logos, no watermark."
+    }
+  ]
+}
