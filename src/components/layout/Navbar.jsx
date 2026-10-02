@@ -47,7 +47,7 @@ export default function Navbar() {
         {menu: "Home",
         href: "/"},
         {menu: "Our Story",
-        href: "/"},
+        href: "/our-story"},
         {menu: "Services",
         submenu: [
             {label:"Wholesale Services For Sellers",

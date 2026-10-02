@@ -15,13 +15,13 @@ export default function Hero() {
             Brand approvals, compliant wholesale sourcing, and full-service Amazon store management—built for long-term, authorized growth in the U.S. market.
           </p>
           <div className="flex flex-col gap-4 pt-6 sm:flex-row sm:flex-wrap">
-            <button type="button" className="group flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-[#00022D] bg-[#00022D] px-4 py-3 font-semibold shadow-lg transition-colors hover:border-[#4A88EA] hover:bg-[#4A88EA] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:w-60">
+            <button type="button" className="group flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-[#00022D] bg-[#00022D] px-4 py-3 font-semibold shadow-lg transition-colors hover:border-[#4A88EA] hover:bg-[#4A88EA] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:w-60 hover:cursor-pointer">
               Get Free Consultation
-              <ArrowRight size={24} aria-hidden="true" className="shrink-0 rounded-full bg-white p-1 text-[#00022D]" />
+              <ArrowRight size={24} aria-hidden="true" className="shrink-0 rounded-full bg-white p-1 text-[#00022D] group-hover:translate-x-1 transition-all duration-300" />
             </button>
-            <button type="button" className="group flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-[#00022D] bg-white px-4 py-3 font-semibold text-[#00022D] shadow-lg transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:w-60">
+            <button type="button" className="group flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-[#00022D] bg-white px-4 py-3 font-semibold text-[#00022D] shadow-lg hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:w-60 hover:translate-x-1 transition-all duration-300 hover:cursor-pointer">
               View Services
-              <ArrowRight size={26} aria-hidden="true" className="shrink-0 rounded-full border border-[#00022D] bg-[#00022D] p-1 text-white" />
+              <ArrowRight size={26} aria-hidden="true" className="shrink-0 rounded-full border border-[#00022D] bg-[#00022D] p-1 text-white group-hover:translate-x-2 transition-all duration-300" />
             </button>
           </div>
         </div>
