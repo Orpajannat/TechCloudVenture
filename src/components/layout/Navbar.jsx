@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { ChevronDown, Menu, X } from 'lucide-react'
@@ -10,6 +10,11 @@ export default function Navbar() {
     const navRef = useRef(null)
     const toggleRef = useRef(null)
     const servicesRef = useRef(null)
+
+    function canHover(event) {
+        return event.pointerType === 'mouse' &&
+            window.matchMedia('(min-width: 1024px) and (hover: hover)').matches
+    }
 
     function closeMenus() {
         setMobileOpen(false)
@@ -77,9 +82,9 @@ export default function Navbar() {
         ],
         href: "/"},
         {menu: "Distribution Partner",
-        href: "/"},
+        href: "/distribution-partner"},
         {menu: "Contact",
-        href: "/"},
+        href: "/contact"},
     ]
   return (
     <nav ref={navRef} aria-label="Main navigation" className="min-w-0 text-base text-white lg:text-lg" onBlur={(event) => {
@@ -93,7 +98,18 @@ export default function Navbar() {
       </button>
       <ul id="primary-navigation" className={`${mobileOpen ? 'flex' : 'hidden'} absolute inset-x-0 top-full max-h-[calc(100dvh-6rem)] flex-col gap-1 overflow-y-auto overscroll-contain bg-[#00022D] p-4 shadow-lg sm:max-h-[calc(100dvh-7rem)] sm:px-6 lg:static lg:flex lg:max-h-none lg:flex-row lg:items-center lg:gap-5 lg:overflow-visible lg:bg-transparent lg:p-0 lg:shadow-none xl:gap-10`}>
         {navItems.map((item, index) => (
-          <li key={index} className="relative min-w-0">
+          <li
+            key={index}
+            className="relative min-w-0"
+            onPointerEnter={(event) => {
+                if (item.submenu && canHover(event)) setSubmenuOpen(true)
+            }}
+            onPointerLeave={(event) => {
+                if (!item.submenu || !canHover(event) || event.currentTarget.contains(document.activeElement)) return
+                setSubmenuOpen(false)
+                setSubmenuItemOpen(null)
+            }}
+          >
             {item.submenu ? (
               <>
                 <button ref={servicesRef} type="button" aria-expanded={submenuOpen} aria-controls="services-navigation" onClick={() => {
@@ -105,7 +121,17 @@ export default function Navbar() {
                 </button>
                 <ul id="services-navigation" className={`${submenuOpen ? 'flex' : 'hidden'} w-full flex-col rounded-md bg-white p-2 text-base text-[#00022D] shadow-lg lg:absolute lg:top-full lg:left-0 lg:max-h-[calc(100dvh-10rem)] lg:w-80 lg:overflow-y-auto lg:overscroll-contain`}>
                   {item.submenu.map((subItem, subIndex) => (
-                    <li key={subIndex} className="min-w-0">
+                    <li
+                      key={subIndex}
+                      className="min-w-0"
+                      onPointerEnter={(event) => {
+                          if (canHover(event)) setSubmenuItemOpen(subIndex)
+                      }}
+                      onPointerLeave={(event) => {
+                          if (!canHover(event) || event.currentTarget.contains(document.activeElement)) return
+                          setSubmenuItemOpen((current) => current === subIndex ? null : current)
+                      }}
+                    >
                       <button type="button" aria-expanded={submenuItemOpen === subIndex} aria-controls={`service-group-${subIndex}`} onClick={() => setSubmenuItemOpen(submenuItemOpen === subIndex ? null : subIndex)} className="flex min-h-11 w-full items-center justify-between gap-2 rounded px-2 py-3 text-left hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-[#4A88EA]">
                         <span>{subItem.label}</span>
                         <ChevronDown size={18} aria-hidden="true" className={`shrink-0 transition-transform ${submenuItemOpen === subIndex ? 'rotate-180' : ''}`} />
