@@ -58,29 +58,29 @@ export default function Navbar() {
             {label:"Wholesale Services For Sellers",
                 submenuItems: [
                     {label: "Brand Approval Service",
-                    href: "/"},
-                    {label: "Brand Approval Service",
-                    href: "/"},
-                    {label: "Brand Approval Service",
-                    href: "/"},
-                    {label: "Brand Approval Service",
-                    href: "/"},
+                    href: "/brand-approval-services"},
+                    {label: "Wholesale Service Management",
+                    href: "/wholesale-service-management"},
+                    {label: "Wholesale Product Research",
+                    href: "/wholesale-product-research"},
+                    {label: "Authorized Reseller Setup",
+                    href: "/authorized-reseller-setup"},
                 ],
-            href: "/"},
-            {label:"Wholesale Services For Sellers",
+            href: "/wholesale-services-for-sellers"},
+            {label:"Amazon Services For Brands",
                 submenuItems: [
-                    {label: "Brand Approval Service",
-                    href: "/"},
-                    {label: "Brand Approval Service",
-                    href: "/"},
-                    {label: "Brand Approval Service",
-                    href: "/"},
-                    {label: "Brand Approval Service",
-                    href: "/"},
+                    {label: "Brand Protection & Control",
+                    href: "/brand-protection-control"},
+                    {label: "Brand Account Management (USA)",
+                    href: "/brand-account-management-usa"},
+                    {label: "Product Listing Management",
+                    href: "/product-listing-management"},
+                    {label: "Brand Store SEO",
+                    href: "/brand-store-seo"},
                 ],
-            href: "/"}
+            href: "/amazon-services-for-brands"}
         ],
-        href: "/"},
+        href: "/services"},
         {menu: "Distribution Partner",
         href: "/distribution-partner"},
         {menu: "Contact",
@@ -112,13 +112,17 @@ export default function Navbar() {
           >
             {item.submenu ? (
               <>
-                <button ref={servicesRef} type="button" aria-expanded={submenuOpen} aria-controls="services-navigation" onClick={() => {
-                    setSubmenuOpen(!submenuOpen)
-                    setSubmenuItemOpen(null)
-                }} className="flex min-h-11 w-full items-center justify-between gap-2 rounded px-2 py-2 text-left hover:text-[#F8C207] focus-visible:outline-2 focus-visible:outline-[#F8C207] lg:justify-start">
-                  {item.menu}
-                  <ChevronDown size={20} aria-hidden="true" className={`shrink-0 transition-transform ${submenuOpen ? 'rotate-180' : ''}`} />
-                </button>
+                <div className="flex items-center justify-between">
+                  <Link href={item.href} onClick={closeMenus} className="flex min-h-11 flex-1 items-center rounded px-2 py-2 hover:text-[#F8C207] focus-visible:outline-2 focus-visible:outline-[#F8C207]">
+                    {item.menu}
+                  </Link>
+                  <button ref={servicesRef} type="button" aria-label="Toggle Services submenu" aria-expanded={submenuOpen} aria-controls="services-navigation" onClick={() => {
+                      setSubmenuOpen(!submenuOpen)
+                      setSubmenuItemOpen(null)
+                  }} className="flex size-11 shrink-0 items-center justify-center rounded hover:text-[#F8C207] focus-visible:outline-2 focus-visible:outline-[#F8C207]">
+                    <ChevronDown size={20} aria-hidden="true" className={`shrink-0 transition-transform ${submenuOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                </div>
                 <ul id="services-navigation" className={`${submenuOpen ? 'flex' : 'hidden'} w-full flex-col rounded-md bg-white p-2 text-base text-[#00022D] shadow-lg lg:absolute lg:top-full lg:left-0 lg:max-h-[calc(100dvh-10rem)] lg:w-80 lg:overflow-y-auto lg:overscroll-contain`}>
                   {item.submenu.map((subItem, subIndex) => (
                     <li
@@ -132,10 +136,10 @@ export default function Navbar() {
                           setSubmenuItemOpen((current) => current === subIndex ? null : current)
                       }}
                     >
-                      <button type="button" aria-expanded={submenuItemOpen === subIndex} aria-controls={`service-group-${subIndex}`} onClick={() => setSubmenuItemOpen(submenuItemOpen === subIndex ? null : subIndex)} className="flex min-h-11 w-full items-center justify-between gap-2 rounded px-2 py-3 text-left hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-[#4A88EA]">
+                      <Link href={subItem.href} type="button" aria-expanded={submenuItemOpen === subIndex} aria-controls={`service-group-${subIndex}`} onClick={() => setSubmenuItemOpen(submenuItemOpen === subIndex ? null : subIndex)} className="flex min-h-11 w-full items-center justify-between gap-2 rounded px-2 py-3 text-left hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-[#4A88EA]">
                         <span>{subItem.label}</span>
                         <ChevronDown size={18} aria-hidden="true" className={`shrink-0 transition-transform ${submenuItemOpen === subIndex ? 'rotate-180' : ''}`} />
-                      </button>
+                      </Link>
                       <ul id={`service-group-${subIndex}`} className={`${submenuItemOpen === subIndex ? 'flex' : 'hidden'} flex-col border-l border-slate-200 pl-3`}>
                         {subItem.submenuItems.map((subSubItem, subSubIndex) => (
                           <li key={subSubIndex}>
@@ -160,3 +164,4 @@ export default function Navbar() {
     </nav>
   )
 }
+
