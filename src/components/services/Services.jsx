@@ -75,7 +75,7 @@ export default function Services() {
   ];
 
   return (
-    <section className="relative min-h-screen bg-slate-50 text-slate-900 overflow-hidden py-20 px-4 sm:px-6 lg:px-8 font-sans">
+    <section id="service-options" className="relative min-h-screen bg-slate-50 text-slate-900 overflow-hidden py-20 px-4 sm:px-6 lg:px-8 font-sans">
       
       <div className="absolute top-10 left-10 w-96 h-96 bg-blue-100/60 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
       <div className="absolute bottom-10 right-10 w-96 h-96 bg-indigo-100/60 rounded-full blur-3xl pointer-events-none animate-pulse delay-1000"></div>

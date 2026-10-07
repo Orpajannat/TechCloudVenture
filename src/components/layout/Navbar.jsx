@@ -136,10 +136,14 @@ export default function Navbar() {
                           setSubmenuItemOpen((current) => current === subIndex ? null : current)
                       }}
                     >
-                      <Link href={subItem.href} type="button" aria-expanded={submenuItemOpen === subIndex} aria-controls={`service-group-${subIndex}`} onClick={() => setSubmenuItemOpen(submenuItemOpen === subIndex ? null : subIndex)} className="flex min-h-11 w-full items-center justify-between gap-2 rounded px-2 py-3 text-left hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-[#4A88EA]">
-                        <span>{subItem.label}</span>
-                        <ChevronDown size={18} aria-hidden="true" className={`shrink-0 transition-transform ${submenuItemOpen === subIndex ? 'rotate-180' : ''}`} />
-                      </Link>
+                      <div className="flex items-center rounded hover:bg-slate-100">
+                        <Link href={subItem.href} onClick={closeMenus} className="flex min-h-11 flex-1 items-center rounded px-2 py-3 text-left focus-visible:outline-2 focus-visible:outline-[#4A88EA]">
+                          {subItem.label}
+                        </Link>
+                        <button type="button" aria-label={`Toggle ${subItem.label} submenu`} aria-expanded={submenuItemOpen === subIndex} aria-controls={`service-group-${subIndex}`} onClick={() => setSubmenuItemOpen(submenuItemOpen === subIndex ? null : subIndex)} className="flex size-11 shrink-0 items-center justify-center rounded focus-visible:outline-2 focus-visible:outline-[#4A88EA]">
+                          <ChevronDown size={18} aria-hidden="true" className={`shrink-0 transition-transform ${submenuItemOpen === subIndex ? 'rotate-180' : ''}`} />
+                        </button>
+                      </div>
                       <ul id={`service-group-${subIndex}`} className={`${submenuItemOpen === subIndex ? 'flex' : 'hidden'} flex-col border-l border-slate-200 pl-3`}>
                         {subItem.submenuItems.map((subSubItem, subSubIndex) => (
                           <li key={subSubIndex}>

@@ -169,8 +169,8 @@ export default function BrandProtectionSection() {
               {/* Image Frame with Rounded Corners */}
               <div className="relative aspect-video w-full overflow-hidden rounded-2xl border-2 border-[#061330]">
                 <Image
-                  src="/image_78ff04.jpg"
-                  alt="Brand Protection & Seller Control Services for Amazon USA Brands"
+                  src="/images/brand-protection-seller-control.webp"
+                  alt="Brand protection analysts reviewing marketplace seller listings and documenting a flagged product"
                   fill
                   className="object-cover transition-transform duration-700 hover:scale-105"
                   priority

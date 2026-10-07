@@ -1,13 +1,14 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 import { UserCog, TrendingUp, BarChart3, DollarSign, ArrowUpRight, BadgeCheck } from 'lucide-react'
 
 const models = [
-  { icon: UserCog, title: 'Brand authorization and compliance' },
-  { icon: TrendingUp, title: 'Marketplace policy adherence' },
-  { icon: BarChart3, title: 'Controlled and scalable distribution' },
-  { icon: DollarSign, title: 'Long-term brand protection' },
+  { icon: UserCog, title: 'Brand authorization and compliance', href: '/brand-approval-services' },
+  { icon: TrendingUp, title: 'Marketplace policy adherence', href: '/brand-protection-control' },
+  { icon: BarChart3, title: 'Controlled and scalable distribution', href: '/wholesale-services-for-sellers' },
+  { icon: DollarSign, title: 'Long-term brand protection', href: '/brand-protection-control' },
 ]
 
 const marketplaces = ['Amazon', 'Walmart', 'eBay']
@@ -119,7 +120,7 @@ export default function DistributionModel() {
 
         {/* Right: the four pillars as full-width rows */}
         <ul className="lg:col-span-7">
-          {models.map(({ icon: Icon, title }, i) => (
+          {models.map(({ icon: Icon, title, href }, i) => (
             <li
               key={title}
               style={{ animationDelay: `${250 + i * 140}ms` }}
@@ -134,9 +135,8 @@ export default function DistributionModel() {
                 }`}
               />
 
-              <a
-                href="#"
-                onClick={(e) => e.preventDefault()}
+              <Link
+                href={href}
                 className="dm-row group relative flex items-center gap-4 overflow-hidden px-3 py-6 outline-none focus-visible:ring-2 focus-visible:ring-sky-300 sm:gap-6 sm:px-6 sm:py-8"
               >
                 {/* Fill that sweeps in from the left on hover */}
@@ -157,7 +157,7 @@ export default function DistributionModel() {
                   aria-hidden="true"
                   className="relative h-6 w-6 shrink-0 text-white/40 transition-all duration-500 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-[#0b1b4d] group-focus-visible:text-[#0b1b4d] sm:h-7 sm:w-7"
                 />
-              </a>
+              </Link>
 
               {/* Closing line under the last row */}
               {i === models.length - 1 && (

@@ -256,7 +256,7 @@ export default function ApprovalSection() {
               <div className={`${popVisual} motion-reduce:animate-none`} style={{ animationDelay: '200ms' }}>
                 <div className={`group relative aspect-[8/7] -rotate-2 overflow-hidden rounded-3xl border-2 border-[#061330] bg-[#E8F4FF] shadow-[8px_8px_0_#061330] transition-all duration-500 ${EASE} hover:rotate-0 hover:scale-[1.03] hover:shadow-[12px_12px_0_#0F2F6E]`}>
                   <Image
-                    src="/images/brand-approval.webp"
+                    src="/images/wholesale-product-research.webp"
                     alt=""
                     fill
                     sizes="(min-width: 1024px) 560px, 90vw"

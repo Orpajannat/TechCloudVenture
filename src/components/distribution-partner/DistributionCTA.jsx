@@ -74,7 +74,7 @@ export default function DistributionCTA() {
 
           <div style={{ animationDelay: '900ms' }} className={`mt-8 ${inView ? 'cta-up' : 'cta-off'}`}>
             <a
-              href="#contact"
+              href="/contact#contact"
               onMouseEnter={() => setSpread(true)}
               onMouseLeave={() => setSpread(false)}
               onFocus={() => setSpread(true)}

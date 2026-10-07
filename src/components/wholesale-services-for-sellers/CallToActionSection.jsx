@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import React, { useState } from 'react';
 import { ArrowRight, Sparkles, ShieldCheck } from 'lucide-react';
 
@@ -51,19 +53,19 @@ export default function CallToActionSection() {
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto pt-2">
-              <button className="w-full sm:w-auto group/btn relative inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 text-white font-bold text-sm shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-violet-500/30 transform hover:-translate-y-1 transition-all duration-300">
+              <Link href="/our-story#book-call" className="w-full sm:w-auto group/btn relative inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 text-white font-bold text-sm shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-violet-500/30 transform hover:-translate-y-1 transition-all duration-300">
                 <span className="relative z-10 flex items-center gap-2.5">
                   Book a Free Consultation
                   <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1.5 transition-transform duration-300" />
                 </span>
-              </button>
+              </Link>
 
-              <button className="w-full sm:w-auto group/secBtn inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-slate-100 hover:bg-slate-200/80 text-slate-800 border border-slate-300 font-bold text-sm shadow-sm transform hover:-translate-y-1 transition-all duration-300">
+              <Link href="/services" className="w-full sm:w-auto group/secBtn inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-slate-100 hover:bg-slate-200/80 text-slate-800 border border-slate-300 font-bold text-sm shadow-sm transform hover:-translate-y-1 transition-all duration-300">
                 <span className="flex items-center gap-2.5">
                   Explore Our Wholesale Services
                   <ArrowRight className="w-4 h-4 text-slate-500 group-hover/secBtn:translate-x-1.5 group-hover/secBtn:text-slate-900 transition-all duration-300" />
                 </span>
-              </button>
+              </Link>
             </div>
 
             <div className="pt-6 border-t border-slate-200/80 w-full flex flex-col sm:flex-row items-center justify-center gap-2 text-xs font-semibold text-slate-500">

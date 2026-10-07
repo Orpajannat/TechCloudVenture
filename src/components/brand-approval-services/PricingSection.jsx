@@ -30,7 +30,7 @@ const packages = [
       'Monthly sales potential: 200+ units',
     ],
     bestFor: 'New & low-budget Amazon Re-Sellers',
-    href: '/place-order?package=basic',
+    href: '/contact?service=brand-approval-services&package=basic#contact',
   },
   {
     id: 'premium',
@@ -50,7 +50,7 @@ const packages = [
       'Monthly sales potential: 500+ units',
     ],
     bestFor: 'Professional & growth-focused Re-Sellers',
-    href: '/place-order?package=premium',
+    href: '/contact?service=brand-approval-services&package=premium#contact',
   },
   {
     id: 'exclusive',
@@ -73,7 +73,7 @@ const packages = [
       'Optional PPC & scaling consultation',
     ],
     bestFor: 'Serious sellers aiming for high ROI & low competition',
-    href: '/place-order?package=exclusive',
+    href: '/contact?service=brand-approval-services&package=exclusive#contact',
   },
 ]
 
@@ -215,11 +215,11 @@ function PackageCard({ pkg, index }) {
         <div className="mt-6 px-5 text-center">
           <Link
             href={href}
-            aria-label={`Place order for the ${name}`}
+            aria-label={`Request the ${name}`}
             className="group/btn relative inline-flex min-h-12 items-center justify-center gap-3 overflow-hidden rounded-full border-2 border-[#061330] bg-[#0F2F6E] py-2 pr-2 pl-7 font-black text-[#E8F1FC] shadow-[4px_4px_0_#061330] transition-all duration-200 hover:translate-x-1 hover:translate-y-1 hover:bg-[#7FAFE6] hover:text-[#061330] hover:shadow-[1px_1px_0_#061330] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0F2F6E] active:shadow-none"
           >
             <span aria-hidden="true" className="absolute inset-y-0 -left-full w-1/2 -skew-x-12 bg-white/40 transition-transform duration-700 group-hover/btn:translate-x-[420%]" />
-            <span className="relative">Place Order</span>
+            <span className="relative">Request Package</span>
             <span className={`relative grid size-8 place-items-center rounded-full bg-[#BFD8F5] text-[#061330] transition-transform duration-300 ${EASE} group-hover/btn:translate-x-1 group-hover/btn:scale-110`}>
               <ArrowRight size={18} strokeWidth={2.5} aria-hidden="true" />
             </span>

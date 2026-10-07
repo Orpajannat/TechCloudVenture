@@ -109,7 +109,7 @@ export default function WhyChooseSection() {
             <div className={`${pop} motion-reduce:animate-none`} style={{ animationDelay: '300ms' }}>
               <div className={`group relative aspect-[9/5] rotate-2 overflow-hidden rounded-3xl border-2 border-[#061330] bg-[#BFD8F5] shadow-[8px_8px_0_#061330] transition-all duration-500 ${EASE} hover:rotate-0 hover:scale-[1.03] hover:shadow-[12px_12px_0_#7FAFE6]`}>
                 <Image
-                  src="/images/why-choose-techcloud.webp"
+                  src="/images/why-tech-cloud-growth.webp"
                   alt=""
                   fill
                   sizes="(min-width: 1024px) 560px, 90vw"

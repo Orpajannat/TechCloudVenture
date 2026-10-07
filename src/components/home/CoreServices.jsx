@@ -1,11 +1,13 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { ArrowUpRight, Check, Plus } from 'lucide-react';
 
 const coreServices = [
   {
     title: 'Brand Approval',
+    href: '/brand-approval-services',
     category: 'Build credibility',
     description: 'We assist you in getting approved by trusted brands with proper documentation and expert guidance.',
     image: '/images/services/brand-approval.webp',
@@ -14,6 +16,7 @@ const coreServices = [
   },
   {
     title: 'Store Management',
+    href: '/wholesale-service-management',
     category: 'Simplify operations',
     description: 'We professionally manage your wholesale store, including products, pricing, orders, and suppliers.',
     image: '/images/services/store-management.webp',
@@ -22,6 +25,7 @@ const coreServices = [
   },
   {
     title: 'Product Research',
+    href: '/wholesale-product-research',
     category: 'Discover opportunities',
     description: 'We identify high-demand, profitable products through data-driven market research.',
     image: '/images/services/product-research.webp',
@@ -30,6 +34,7 @@ const coreServices = [
   },
   {
     title: 'Authorized Reseller Store Setup',
+    href: '/authorized-reseller-setup',
     category: 'Launch with confidence',
     description: 'We set up your authorized reseller account in full compliance with brand guidelines.',
     image: '/images/services/reseller-store-setup.webp',
@@ -142,6 +147,9 @@ export default function CoreServices() {
                     ))}
                   </ul>
                 </details>
+                <Link href={service.href} className="mt-4 inline-flex min-h-11 items-center gap-2 self-start rounded-lg px-3 text-sm font-bold text-[#02276B] hover:text-[#007EA5] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#007EA5]">
+                  View service <ArrowUpRight size={16} aria-hidden="true" />
+                </Link>
               </div>
             </article>
           ))}

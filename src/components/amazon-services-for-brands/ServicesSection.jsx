@@ -18,8 +18,8 @@ const services = [
   {
     title: 'Brand Protection & Seller Control',
     icon: ShieldCheck,
-    image: '/images/services/brand-protection.webp',
-    href: '/services/brand-protection',
+    image: '/images/brand-protection-seller-control.webp',
+    href: '/brand-protection-control',
     intro: [{ t: 'Unauthorized sellers and pricing chaos can destroy brand value.' }],
     lead: [{ t: 'Our ' }, { t: 'Brand Protection & Seller Control Service', b: true }, { t: ' helps brands:' }],
     list: [
@@ -34,8 +34,8 @@ const services = [
   {
     title: 'Brand Account Management',
     icon: UserCog,
-    image: '/images/services/brand-account-management.webp',
-    href: '/services/brand-account-management',
+    image: '/images/brand-account-management-hero.webp',
+    href: '/brand-account-management-usa',
     intro: [
       { t: 'Managing a brand account on Amazon USA requires continuous monitoring, fast issue resolution, and policy expertise.' },
     ],
@@ -56,8 +56,8 @@ const services = [
   {
     title: 'Product Listing Management',
     icon: ListChecks,
-    image: '/images/services/product-listing-management.webp',
-    href: '/services/product-listing-management',
+    image: '/images/listing-management-hero.webp',
+    href: '/product-listing-management',
     intro: [{ t: 'Your listings represent your brand on Amazon.' }],
     lead: [{ t: 'Our ' }, { t: 'Product Listing Management Service', b: true }, { t: ' ensures listings are:' }],
     list: [
@@ -71,8 +71,8 @@ const services = [
   {
     title: 'Brand Store SEO',
     icon: Store,
-    image: '/images/services/brand-store-seo.webp',
-    href: '/services/brand-store-seo',
+    image: '/images/brand-store-seo-hero.webp',
+    href: '/brand-store-seo',
     intro: [{ t: 'Your Amazon Brand Store is your digital storefront.' }],
     lead: [
       { t: 'Our ' },

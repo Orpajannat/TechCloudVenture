@@ -28,7 +28,7 @@ const packages = [
       'Basic Buy Box & competition check',
     ],
     bestFor: 'New or low-budget Re-Sellers',
-    href: '/place-order?package=starter',
+    href: '/contact?service=wholesale-product-research&package=starter#contact',
   },
   {
     id: 'growth',
@@ -45,7 +45,7 @@ const packages = [
       'Demand & competition validation',
     ],
     bestFor: 'Growing Amazon Re-Sellers',
-    href: '/place-order?package=growth',
+    href: '/contact?service=wholesale-product-research&package=growth#contact',
   },
   {
     id: 'pro',
@@ -63,7 +63,7 @@ const packages = [
       'Low-competition product focus',
     ],
     bestFor: 'Professional sellers & investors',
-    href: '/place-order?package=pro',
+    href: '/contact?service=wholesale-product-research&package=pro#contact',
   },
   {
     id: 'custom',
@@ -79,7 +79,7 @@ const packages = [
       'Category-specific needs',
     ],
     bestFor: 'We offer a Custom Product Research Package.',
-    href: '/place-order?package=custom',
+    href: '/contact?service=wholesale-product-research&package=custom#contact',
   },
 ]
 

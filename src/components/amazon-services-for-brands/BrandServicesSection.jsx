@@ -188,7 +188,7 @@ export default function BrandServicesSection() {
             <div className={`${pop} motion-reduce:animate-none`} style={{ animationDelay: '400ms' }}>
               <div className="group relative aspect-[63/52] -rotate-2 overflow-hidden rounded-3xl border-2 border-[#061330] bg-[#BFD8F5] shadow-[8px_8px_0_#061330] transition-all duration-500 ease-[cubic-bezier(0.3,1.6,0.5,1)] hover:rotate-0 hover:scale-[1.03] hover:shadow-[12px_12px_0_#0F2F6E]">
                 <Image
-                  src="/images/amazon-brand-services.webp"
+                  src="/images/brand-value-partnership.webp"
                   alt=""
                   fill
                   sizes="(min-width: 1024px) 560px, 90vw"

@@ -195,8 +195,8 @@ export default function FaqsBrandProtectionSection() {
               
               <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl border-2 border-[#061330]">
                 <Image
-                  src="/image_83e486.png"
-                  alt="FAQs Brand Protection Support Illustration"
+                  src="/images/brand-protection-faq.webp"
+                  alt="Brand protection consultant explaining a flagged seller listing and compliance documentation"
                   fill
                   className="object-cover transition-transform duration-700 hover:scale-105"
                 />

@@ -4,14 +4,13 @@ import { Mail, MapPin, Phone } from 'lucide-react';
 
 const quickLinks = [
   { label: 'Home', href: '/' },
-  { label: 'Services', href: '/#core-services' },
-  { label: 'Distribution Partner' },
-  { label: 'FAQ' },
+  { label: 'Services', href: '/services' },
+  { label: 'Distribution Partner', href: '/distribution-partner' },
 ];
 
 const services = [
-  { label: 'Wholesale Services for Sellers' },
-  { label: 'Amazon Services for Brands' },
+  { label: 'Wholesale Services for Sellers', href: '/wholesale-services-for-sellers' },
+  { label: 'Amazon Services for Brands', href: '/amazon-services-for-brands' },
 ];
 
 const socials = [
@@ -86,10 +85,10 @@ export default function Footer() {
           <h2 id="footer-contact-info" className="text-base font-semibold tracking-tight">Contact info</h2>
           <div aria-hidden="true" className="mt-3 h-0.5 w-8 rounded-full bg-[#0EB1DB]/70" />
           <address aria-labelledby="footer-contact-info" className="mt-6 space-y-4 text-sm leading-7 text-slate-300 not-italic">
-            <div className="flex items-start gap-3">
+            <a href="https://www.google.com/maps/search/?api=1&query=3650+Greenside+Ct%2C+Dacula%2C+GA+30019" target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 rounded hover:text-[#6DDCF5] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6DDCF5]">
               <MapPin size={18} aria-hidden="true" className="mt-1 shrink-0 text-[#6DDCF5]" />
-              <p>3650 Greenside Ct,<br />Dacula, GA,USA, 30019</p>
-            </div>
+              <span>3650 Greenside Ct,<br />Dacula, GA, USA 30019</span>
+            </a>
             <a href="mailto:info@techcloudventure.com" className="group flex min-h-11 items-center gap-3 rounded transition-colors hover:text-[#6DDCF5] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6DDCF5] motion-reduce:transition-none">
               <Mail size={18} aria-hidden="true" className="shrink-0 text-[#6DDCF5]" />
               <span className="min-w-0 wrap-anywhere">info@techcloudventure.com</span>

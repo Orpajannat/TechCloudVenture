@@ -140,7 +140,7 @@ export default function CallToActionSection() {
             
             {/* Primary Action Button */}
             <Link
-              href="/consultation"
+              href="/our-story#book-call"
               className="group relative inline-flex w-full sm:w-auto items-center justify-center gap-3 overflow-hidden rounded-full border-2 border-white bg-white px-8 py-4 text-center font-black text-[#061330] shadow-[5px_5px_0_#7FAFE6] transition-all duration-200 hover:-translate-y-1 hover:bg-[#BFD8F5] hover:shadow-[8px_8px_0_#7FAFE6] active:translate-y-0 active:shadow-none"
             >
               <span aria-hidden="true" className="absolute inset-y-0 -left-full w-1/2 -skew-x-12 bg-[#061330]/10 transition-transform duration-700 group-hover:translate-x-[420%]" />
@@ -153,7 +153,7 @@ export default function CallToActionSection() {
 
             {/* Secondary Action Button */}
             <Link
-              href="/wholesale-services"
+              href="/wholesale-services-for-sellers"
               className="group relative inline-flex w-full sm:w-auto items-center justify-center gap-3 overflow-hidden rounded-full border-2 border-white/30 bg-transparent px-8 py-4 text-center font-black text-white shadow-[5px_5px_0_#0F2F6E] transition-all duration-200 hover:-translate-y-1 hover:border-white hover:bg-white/10 hover:shadow-[8px_8px_0_#7FAFE6] active:translate-y-0 active:shadow-none"
             >
               <Compass size={18} strokeWidth={2.5} className="text-[#BFD8F5]" />

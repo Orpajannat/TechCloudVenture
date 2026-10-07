@@ -25,7 +25,7 @@ const packages = [
       'Approval process follow-up',
     ],
     buttonText: 'Click Here',
-    buttonHref: '/checkout?package=standard',
+    buttonHref: '/contact?service=authorized-reseller-setup&package=standard#contact',
   },
   {
     name: 'Professional Approval Package',
@@ -40,7 +40,7 @@ const packages = [
       'Advanced approval support for higher success rate',
     ],
     buttonText: 'Click Here',
-    buttonHref: '/checkout?package=professional',
+    buttonHref: '/contact?service=authorized-reseller-setup&package=professional#contact',
   },
 ]
 

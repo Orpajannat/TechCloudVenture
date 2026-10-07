@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { ArrowRight, Sparkles, Calendar, Compass, ShieldCheck } from 'lucide-react';
 
 export default function RightService() {
@@ -111,12 +112,12 @@ export default function RightService() {
             </p>
 
             <div className="flex items-center justify-end gap-3">
-              <button
-                onClick={() => setActiveModal(null)}
+              <Link
+                href={activeModal === 'consultation' ? '/contact#contact' : '/services#service-options'}
                 className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs tracking-wide transition-all shadow-lg shadow-blue-600/30"
               >
-                {activeModal === 'consultation' ? 'Confirm Booking Request' : 'Browse Services'}
-              </button>
+                {activeModal === 'consultation' ? 'Contact Us to Book' : 'Browse Services'}
+              </Link>
             </div>
 
           </div>

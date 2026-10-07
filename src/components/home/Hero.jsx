@@ -1,4 +1,5 @@
-﻿import Image from "next/image";
+import Link from 'next/link';
+import Image from "next/image";
 import { ArrowRight, Check, Play } from "lucide-react";
 
 export default function Hero() {
@@ -67,8 +68,7 @@ export default function Hero() {
             <div className="mt-9 flex flex-col gap-4 sm:flex-row">
 
               {/* Primary Button */}
-              <button
-                type="button"
+              <Link href="/#book-call"
                 className="group flex items-center justify-center gap-3 rounded-xl bg-[#4A88EA] px-6 py-4 font-semibold text-white shadow-xl shadow-[#4A88EA]/20 transition-all duration-300 hover:-translate-y-1 hover:bg-[#5b96f0]"
               >
                 Get Free Consultation
@@ -76,11 +76,10 @@ export default function Hero() {
                 <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#00022D] transition-transform duration-300 group-hover:translate-x-1">
                   <ArrowRight size={18} />
                 </span>
-              </button>
+              </Link>
 
               {/* Secondary Button */}
-              <button
-                type="button"
+              <Link href="/services"
                 className="group flex items-center justify-center gap-3 rounded-xl border border-white/20 bg-white/5 px-6 py-4 font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white/10"
               >
                 <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 transition-transform duration-300 group-hover:rotate-90">
@@ -88,7 +87,7 @@ export default function Hero() {
                 </span>
 
                 View Services
-              </button>
+              </Link>
 
             </div>
 

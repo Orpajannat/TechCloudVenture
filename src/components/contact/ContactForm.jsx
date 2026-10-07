@@ -1,9 +1,14 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import emailjs from '@emailjs/browser'
 import { Check, Send, Loader2, Mail } from 'lucide-react'
 
 const services = ['Amazon Wholesale Store Management', 'Brand Approval Service', 'Brand Services', 'Other']
+
+const EMAILJS_SERVICE_ID = "service_qnctqnu"
+const EMAILJS_TEMPLATE_ID = "template_u4er6r5"
+const EMAILJS_PUBLIC_KEY = "RdDMaC7gZ5y5ff40Q"
 
 // Inline SVGs so the icons don't depend on your lucide-react version
 const socials = [
@@ -98,20 +103,43 @@ export default function ContactForm() {
   const onSubmit = async (e) => {
     e.preventDefault()
     setStatus('sending')
-    // TODO: send { ...values, services: picked } to your API route here
-    await new Promise((r) => setTimeout(r, 1200))
-    setStatus('sent')
-    setTimeout(() => {
-      setValues({ name: '', email: '', phone: '', company: '', marketplace: '', message: '' })
-      setPicked([])
+
+    // Format template parameters to properly match your EmailJS auto-reply setup
+    const templateParams = {
+      email: values.email,          // Routes the confirmation email to the user
+      first_name: values.name,      // Populates the greeting name in your template
+      phone: values.phone || 'Not provided',
+      company: values.company || 'Not provided',
+      marketplace: values.marketplace || 'Not provided',
+      services: picked.length > 0 ? picked.join(', ') : 'None selected',
+      message: values.message || 'No additional message provided',
+    }
+
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        templateParams,
+        EMAILJS_PUBLIC_KEY
+      )
+
+      setStatus('sent')
+      setTimeout(() => {
+        setValues({ name: '', email: '', phone: '', company: '', marketplace: '', message: '' })
+        setPicked([])
+        setStatus('idle')
+      }, 2500)
+    } catch (error) {
+      console.error('EmailJS Error:', error)
+      alert('Something went wrong. Please try again.')
       setStatus('idle')
-    }, 2500)
+    }
   }
 
   const up = inView ? 'fm-up' : 'fm-off'
 
   return (
-    <section ref={ref} className="bg-sky-50 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
+    <section id="contact" ref={ref} className="bg-sky-50 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
       <style>{`
         @keyframes fm-up    { from { opacity:0; transform:translateY(22px) } to { opacity:1; transform:none } }
         @keyframes fm-left  { from { opacity:0; transform:translateX(-40px) } to { opacity:1; transform:none } }
@@ -148,15 +176,15 @@ export default function ContactForm() {
             <ul className="mt-8 flex gap-3">
               {socials.map(({ name, svg }, i) => (
                 <li key={name} style={{ animationDelay: `${500 + i * 100}ms` }} className={up}>
-                  <a
-                    href="#"
+                  <span
+                    role="img"
                     aria-label={name}
-                    className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 text-white outline-none transition-all duration-300 hover:-translate-y-1.5 hover:rotate-6 hover:border-white hover:bg-white hover:text-[#0b1b4d] focus-visible:ring-4 focus-visible:ring-sky-300"
+                    className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 text-white outline-none transition-all duration-300"
                   >
                     <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
                       {svg}
                     </svg>
-                  </a>
+                  </span>
                 </li>
               ))}
             </ul>

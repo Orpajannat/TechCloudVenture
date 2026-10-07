@@ -296,8 +296,8 @@ export default function WholesaleStoreManagementPackageSection() {
               {/* CTA */}
               <div className="mt-6 px-5 text-center">
                 <Link
-                  href="/place-order?package=wholesale-management"
-                  aria-label="Place order for Wholesale Store Management Package"
+                  href="/contact?service=wholesale-service-management&package=wholesale-management#contact"
+                  aria-label="Request Wholesale Store Management Package"
                   className="group/btn relative inline-flex min-h-12 items-center justify-center gap-3 overflow-hidden rounded-full border-2 border-[#061330] bg-[#0F2F6E] py-2 pr-2 pl-7 font-black text-[#E8F1FC] shadow-[4px_4px_0_#061330] transition-all duration-200 hover:translate-x-1 hover:translate-y-1 hover:bg-[#7FAFE6] hover:text-[#061330] hover:shadow-[1px_1px_0_#061330] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0F2F6E] active:shadow-none"
                 >
                   <span aria-hidden="true" className="absolute inset-y-0 -left-full w-1/2 -skew-x-12 bg-white/40 transition-transform duration-700 group-hover/btn:translate-x-[420%]" />
