@@ -30,7 +30,7 @@ export default function DistributionCTA() {
   const words = HEADING.split(' ')
 
   return (
-    <section ref={ref} className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
+    <section ref={ref} className="bg-white px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-28">
       <style>{`
         @keyframes cta-word  { from { transform:translateY(110%) } to { transform:none } }
         @keyframes cta-up    { from { opacity:0; transform:translateY(24px) } to { opacity:1; transform:none } }
@@ -51,7 +51,7 @@ export default function DistributionCTA() {
         }
       `}</style>
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-10 overflow-hidden rounded-[2rem] bg-gradient-to-br from-sky-500 via-blue-600 to-[#0b2a7a] px-6 py-12 text-white shadow-[0_30px_70px_rgba(11,42,122,0.35)] sm:px-10 sm:py-14 lg:grid-cols-12 lg:gap-8 lg:px-16 lg:py-20">
+      <div className="relative mx-auto grid max-w-[76rem] items-center gap-10 overflow-hidden rounded-[2rem] bg-gradient-to-br from-sky-500 via-blue-600 to-[#0b2a7a] px-6 py-12 text-white shadow-[0_30px_70px_rgba(11,42,122,0.35)] sm:px-10 sm:py-14 lg:grid-cols-12 lg:gap-8 lg:px-16 lg:py-20">
         {/* Glows */}
         <span aria-hidden="true" className="cta-glow pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-white/25 blur-3xl" />
         <span aria-hidden="true" className="cta-glow pointer-events-none absolute -bottom-24 right-10 h-72 w-72 rounded-full bg-sky-300/30 blur-3xl" style={{ animationDelay: '-4s' }} />

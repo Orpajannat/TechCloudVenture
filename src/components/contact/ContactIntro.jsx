@@ -64,7 +64,7 @@ export default function ContactIntro() {
       <span aria-hidden="true" className="ct-drift pointer-events-none absolute -right-20 top-10 h-80 w-80 rounded-full bg-cyan-200/50 blur-3xl sm:h-[28rem] sm:w-[28rem]" />
       <span aria-hidden="true" className="ct-drift pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-sky-200/50 blur-3xl" style={{ animationDelay: '-7s' }} />
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-2 lg:gap-16">
+      <div className="relative mx-auto grid max-w-7xl px-4 sm:px-6 lg:px-8 items-center gap-14 lg:grid-cols-2 lg:gap-16">
         {/* Copy */}
         <div>
           <span style={{ animationDelay: '0ms' }} className={`inline-flex items-center gap-3 rounded-full border border-[#0b1b4d]/10 bg-white px-4 py-2 text-sm font-semibold shadow-[0_6px_20px_rgba(11,27,77,0.08)] ${show('ct-slide')}`}>

@@ -71,7 +71,7 @@ export default function DistributionModel() {
         className="dm-drift pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-sky-400/20 blur-3xl sm:h-96 sm:w-96"
       />
 
-      <div className="relative mx-auto grid max-w-7xl gap-12 lg:grid-cols-12 lg:gap-16">
+      <div className="relative mx-auto grid max-w-7xl px-4 sm:px-6 lg:px-8 gap-12 lg:grid-cols-12 lg:gap-16">
         {/* Left: heading, context, marketplaces */}
         <div className="lg:col-span-5">
           <div className="lg:sticky lg:top-24">

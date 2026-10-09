@@ -62,8 +62,8 @@ export default function TrustedByBrands() {
         <span className="tr-sweep absolute -top-10 left-[30%] h-[140%] w-10 bg-sky-400/[0.06]" style={{ transform: 'skewX(-24deg)', animationDelay: '-6s' }} />
       </div>
 
-      <div className="relative mx-auto max-w-6xl">
-        {/* Header */}
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Header */} 
         <h2 className={`max-w-3xl text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl ${show('tr-up')}`}>
           Trusted by Brands.
           <br />

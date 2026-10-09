@@ -93,7 +93,7 @@ export default function HowWeAddValue() {
         }
       `}</style>
 
-      <div className="mx-auto grid w-full min-w-0 max-w-7xl items-start gap-12 lg:grid-cols-2 lg:gap-16">
+      <div className="mx-auto grid w-full min-w-0 max-w-7xl items-start px-4 sm:px-6 lg:px-8 gap-12 lg:grid-cols-2 lg:gap-16">
         {/* Image: framed, with a floating blob and corner brackets */}
         <div className={`relative min-w-0 lg:sticky lg:top-24 ${inView ? 'hv-left' : 'hv-off'}`}>
           <span aria-hidden="true" className="hv-float absolute -left-6 -top-6 h-32 w-32 rounded-full bg-sky-200/70 blur-2xl sm:h-44 sm:w-44" />

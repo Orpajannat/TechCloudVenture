@@ -8,7 +8,7 @@ export default function OurDistributionPartner() {
   return (
     <section
       aria-labelledby="distribution-overview-heading"
-      className="relative isolate bg-gradient-to-br from-[#EAF4FB] via-[#F3F9FD] to-[#E2F1FC] px-4 py-24 font-sans text-[#02276b] sm:px-6 sm:py-32 lg:px-12 lg:py-36 overflow-hidden"
+      className="relative isolate bg-gradient-to-br from-[#EAF4FB] via-[#F3F9FD] to-[#E2F1FC] py-16 font-sans text-[#02276b] sm:py-20 lg:py-28 overflow-hidden"
     >
       {/* 1. CONTINUOUS ROUND-AND-ROUND ORBITING BACKGROUND CIRCLES */}
       <motion.div
@@ -34,7 +34,7 @@ export default function OurDistributionPartner() {
         className="absolute bottom-10 right-10 size-[650px] bg-[#0077B6]/15 rounded-full blur-[160px] pointer-events-none -z-10"
       />
 
-      <div className="mx-auto max-w-7xl relative z-10">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         
         {/* Organic Flow Header */}
         <div className="text-center max-w-3xl mx-auto mb-20">
@@ -76,7 +76,7 @@ export default function OurDistributionPartner() {
         </div>
 
         {/* Dynamic Organic Asymmetric Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-16">
 
           {/* Left Side: Organic Pill-Shaped Image Showcase (Span 6) */}
           <motion.div
@@ -84,7 +84,7 @@ export default function OurDistributionPartner() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, type: 'spring', stiffness: 180 }}
-            className="lg:col-span-6 relative"
+            className="relative origin-top-left lg:col-span-6"
           >
             <motion.div 
               whileHover={{ scale: 1.02 }}

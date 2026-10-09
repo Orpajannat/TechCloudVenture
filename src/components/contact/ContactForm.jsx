@@ -139,7 +139,7 @@ export default function ContactForm() {
   const up = inView ? 'fm-up' : 'fm-off'
 
   return (
-    <section id="contact" ref={ref} className="bg-sky-50 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
+    <section id="contact" ref={ref} className="bg-sky-50 px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-28">
       <style>{`
         @keyframes fm-up    { from { opacity:0; transform:translateY(22px) } to { opacity:1; transform:none } }
         @keyframes fm-left  { from { opacity:0; transform:translateX(-40px) } to { opacity:1; transform:none } }
@@ -156,7 +156,8 @@ export default function ContactForm() {
         }
       `}</style>
 
-      <div className="fm-root mx-auto grid max-w-7xl overflow-hidden rounded-[2rem] bg-white shadow-[0_30px_80px_rgba(11,27,77,0.15)] lg:grid-cols-5">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="fm-root grid overflow-hidden rounded-[2rem] bg-white shadow-[0_30px_80px_rgba(11,27,77,0.15)] lg:grid-cols-5">
         {/* Left: intro panel */}
         <div className={`relative overflow-hidden bg-[#0b1b4d] px-6 py-10 text-white sm:px-10 sm:py-12 lg:col-span-2 lg:py-16 ${inView ? 'fm-left' : 'fm-off'}`}>
           <span aria-hidden="true" className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full border border-white/10" />
@@ -253,6 +254,7 @@ export default function ContactForm() {
             </button>
           </div>
         </form>
+        </div>
       </div>
     </section>
   )

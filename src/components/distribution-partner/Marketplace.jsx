@@ -64,7 +64,7 @@ export default function Marketplace() {
         ))}
       </div>
 
-      <div className="relative mx-auto max-w-6xl">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Heading */}
         <div className="mx-auto max-w-3xl text-center">
           <h2 className={`text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl ${inView ? 'mc-up' : 'mc-off'}`}>

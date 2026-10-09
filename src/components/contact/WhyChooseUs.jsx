@@ -110,7 +110,7 @@ export default function WhyChooseUs() {
       </div>
 
       {/* Heading */}
-      <div className="relative mx-auto max-w-3xl text-center">
+      <div className="relative mx-auto max-w-7xl text-center">
         <h2 className={`text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl ${show('wy-up')}`}>
           <span className="wy-text">Why Tech Cloud Global Venture?</span>
         </h2>
