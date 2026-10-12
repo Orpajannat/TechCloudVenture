@@ -1,138 +1,367 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { CheckCircle2, ShieldCheck, Globe, ArrowRight, Sparkles } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Bricolage_Grotesque, DM_Sans } from 'next/font/google';
+import { CheckCircle2, ShieldCheck, Globe, ArrowRight, X } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 
-export default function Why() {
-  const [activePopup, setActivePopup] = useState(null);
-  const [isJumping, setIsJumping] = useState(false);
+const display = Bricolage_Grotesque({ subsets: ['latin'], weight: ['500', '700', '800'] });
+const body = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
+/* ---------- data (content unchanged) ---------- */
+const BENEFITS = [
+  {
+    title: 'USA marketplace focused',
+    description: 'Tailored specifically for Amazon USA rules, regional compliance, FBA logistics, and local tax/business guidelines.',
+  },
+  {
+    title: 'Compliance-first execution',
+    description: 'Zero risky shortcuts. We prioritize account safety, proper documentation, and strict adherence to Amazon terms of service.',
+  },
+  {
+    title: 'Brand-authorized & invoice-backed',
+    description: 'Direct distribution channels ensuring valid tier-1 invoices that successfully pass any Amazon seller performance review.',
+  },
+  {
+    title: 'Clear agreements & transparent communication',
+    description: 'No hidden clauses or surprises. Complete visibility into your store operations, profit margins, and strategy updates.',
+  },
+  {
+    title: 'ROI-driven product selection',
+    description: 'Data-backed catalog filtering to source profitable products with high buy-box ownership and stable profit margins.',
+  },
+  {
+    title: 'Long-term business mindset',
+    description: 'Building robust, sustainable wholesale assets designed for multi-year growth and capital appreciation.',
+  },
+];
+const ACCENTS = [
+  { fill: '#ff5c7a', deep: '#e0305a' },
+  { fill: '#ffb86b', deep: '#c4620a' },
+  { fill: '#5cf2c1', deep: '#0d8a66' },
+  { fill: '#a99bff', deep: '#6a58e0' },
+  { fill: '#ff8fc1', deep: '#d1307f' },
+  { fill: '#6fd3ff', deep: '#0b7fa8' },
+];
+
+/* ---------- variants ---------- */
+const group = (delay = 0, gap = 0.1) => ({
+  hidden: {},
+  show: { transition: { delayChildren: delay, staggerChildren: gap } },
+});
+const pop = {
+  hidden: { opacity: 0, scale: 0.5, x: 40, rotate: 3 },
+  show: { opacity: 1, scale: 1, x: 0, rotate: 0, transition: { type: 'spring', stiffness: 380, damping: 15 } },
+};
+const popUp = {
+  hidden: { opacity: 0, scale: 0.4, y: 40, rotate: -5 },
+  show: { opacity: 1, scale: 1, y: 0, rotate: 0, transition: { type: 'spring', stiffness: 380, damping: 15 } },
+};
+const fadeUp = {
+  hidden: { opacity: 0, y: 24, filter: 'blur(8px)' },
+  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.55, ease: 'easeOut' } },
+};
+const word = {
+  hidden: { opacity: 0, y: 50, rotateX: -70, filter: 'blur(10px)' },
+  show: { opacity: 1, y: 0, rotateX: 0, filter: 'blur(0px)', transition: { type: 'spring', stiffness: 130, damping: 14 } },
+};
+
+function Words({ text, shimmer, reduce }) {
+  return text.split(' ').map((w, i) => (
+    <span key={`${w}-${i}`}>
+      <motion.span variants={word} className="inline-block" style={{ transformOrigin: '50% 100%' }}>
+        {shimmer ? (
+          <motion.span
+            className="inline-block bg-clip-text text-transparent"
+            style={{ backgroundImage: 'linear-gradient(90deg,#ff5c7a,#ff9a5c,#12b886,#ff5c7a)', backgroundSize: '300% 100%' }}
+            animate={reduce ? undefined : { backgroundPositionX: ['0%', '300%'] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
+          >
+            {w}
+          </motion.span>
+        ) : (
+          w
+        )}
+      </motion.span>{' '}
+    </span>
+  ));
+}
+
+/* ---------- row ---------- */
+function BenefitRow({ item, index, lit, reduce, onOpen }) {
+  const { fill, deep } = ACCENTS[index];
+  return (
+    <motion.li variants={pop} className="list-none">
+      <motion.button
+        type="button"
+        aria-haspopup="dialog"
+        onClick={(e) => onOpen(item, index, e.currentTarget)}
+        whileHover={reduce ? undefined : { x: 10, scale: 1.015 }}
+        whileTap={reduce ? undefined : { scale: 0.97 }}
+        transition={{ type: 'spring', stiffness: 340, damping: 18 }}
+        className="group relative flex w-full items-center justify-between gap-4 overflow-hidden rounded-3xl border border-[#1a1040]/10 bg-white p-4 text-left shadow-lg shadow-[#1a1040]/8 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6a58e0] sm:p-5"
+      >
+        {/* accent bar + hover fill */}
+        <span aria-hidden="true" className="absolute inset-y-0 left-0 w-1.5" style={{ backgroundColor: fill }} />
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 origin-left scale-x-0 opacity-20 transition-transform duration-500 group-hover:scale-x-100 motion-reduce:transition-none"
+          style={{ backgroundColor: fill }}
+        />
+        {/* live highlight that travels down the list */}
+        {lit && !reduce && (
+          <motion.span
+            aria-hidden="true"
+            layoutId="why-live"
+            transition={{ type: 'spring', stiffness: 260, damping: 26 }}
+            className="absolute inset-0 rounded-3xl border-2"
+            style={{ borderColor: fill, boxShadow: `0 0 0 6px ${fill}22` }}
+          />
+        )}
+
+        <span className="relative flex min-w-0 items-center gap-3.5 sm:gap-4">
+          <motion.span
+            animate={lit && !reduce ? { scale: [1, 1.2, 1], rotate: [0, -10, 0] } : { scale: 1, rotate: 0 }}
+            transition={{ duration: 0.7 }}
+            className="flex size-10 shrink-0 items-center justify-center rounded-full text-[#120b2e] shadow-md"
+            style={{ backgroundColor: fill }}
+          >
+            <CheckCircle2 className="size-5" aria-hidden="true" />
+          </motion.span>
+          <span className={`${display.className} text-base leading-snug font-bold text-[#1a1040] sm:text-lg`}>{item.title}</span>
+        </span>
+
+        <span
+          aria-hidden="true"
+          className="relative flex size-9 shrink-0 items-center justify-center rounded-full bg-[#f3eeff] transition-all duration-300 group-hover:rotate-[-45deg] group-hover:bg-[#1a1040] group-hover:text-white motion-reduce:transition-none"
+          style={{ color: deep }}
+        >
+          <ArrowRight className="size-4" />
+        </span>
+      </motion.button>
+    </motion.li>
+  );
+}
+
+/* ---------- pop-up ---------- */
+function Popup({ item, accent, onClose, reduce }) {
+  const closeRef = useRef(null);
   useEffect(() => {
-    const interval = setInterval(() => {
-      setIsJumping((prev) => !prev);
-    }, 2000);
-    return () => clearInterval(interval);
+    closeRef.current?.focus();
   }, []);
 
-  const benefits = [
-    {
-      title: 'USA marketplace focused',
-      description: 'Tailored specifically for Amazon USA rules, regional compliance, FBA logistics, and local tax/business guidelines.'
-    },
-    {
-      title: 'Compliance-first execution',
-      description: 'Zero risky shortcuts. We prioritize account safety, proper documentation, and strict adherence to Amazon terms of service.'
-    },
-    {
-      title: 'Brand-authorized & invoice-backed',
-      description: 'Direct distribution channels ensuring valid tier-1 invoices that successfully pass any Amazon seller performance review.'
-    },
-    {
-      title: 'Clear agreements & transparent communication',
-      description: 'No hidden clauses or surprises. Complete visibility into your store operations, profit margins, and strategy updates.'
-    },
-    {
-      title: 'ROI-driven product selection',
-      description: 'Data-backed catalog filtering to source profitable products with high buy-box ownership and stable profit margins.'
-    },
-    {
-      title: 'Long-term business mindset',
-      description: 'Building robust, sustainable wholesale assets designed for multi-year growth and capital appreciation.'
-    }
-  ];
-
   return (
-    <section className="relative min-h-screen bg-slate-50 text-slate-900 overflow-hidden py-24 px-4 sm:px-6 lg:px-8 flex items-center justify-center font-sans">
-      
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-100 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-100 rounded-full blur-3xl pointer-events-none animate-pulse delay-1000"></div>
-
-      <div className="max-w-6xl mx-auto w-full space-y-12 relative z-10">
-        
-        <div className="text-center space-y-4">
-          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 shadow-md transition-transform duration-500 ${isJumping ? '-translate-y-2' : 'translate-y-0'}`}>
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
-            <Globe className="w-4 h-4 text-blue-600" />
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-700">Enterprise Excellence</span>
-          </div>
-          <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900">
-            Why Choose Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Wholesale Services?</span>
-          </h2>
-          <p className="text-slate-600 text-sm sm:text-base max-w-2xl mx-auto">
-            Click any core advantage below for a live strategic breakdown and operational insight.
-          </p>
-        </div>
-
-        {/* Round Live Motion Container Card */}
-        <div className={`relative bg-blue-600 rounded-[3rem] p-8 sm:p-12 shadow-2xl overflow-hidden border-4 border-white transition-all duration-700 ${isJumping ? 'shadow-blue-500/30 scale-[1.01]' : 'shadow-blue-500/10 scale-100'}`}>
-          
-          <div className="absolute -right-20 -top-20 w-80 h-80 bg-blue-500 rounded-full blur-2xl pointer-events-none"></div>
-          <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-indigo-700 rounded-full blur-2xl pointer-events-none"></div>
-
-          <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-            {benefits.map((item, idx) => (
-              <div
-                key={idx}
-                onClick={() => setActivePopup(item)}
-                className="group cursor-pointer flex items-center justify-between p-4 sm:p-5 rounded-2xl bg-blue-500/40 hover:bg-white/20 border border-white/20 backdrop-blur-md transition-all duration-300 transform hover:-translate-y-1 shadow-lg"
-              >
-                <div className="flex items-center gap-3 sm:gap-4">
-                  <div className="w-8 h-8 rounded-full bg-white text-blue-600 flex items-center justify-center shrink-0 shadow group-hover:scale-110 transition-transform">
-                    <CheckCircle2 className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <span className="text-xs sm:text-sm font-bold text-white tracking-wide">
-                    {item.title}
-                  </span>
-                </div>
-                <div className="w-7 h-7 rounded-full bg-white/10 group-hover:bg-white group-hover:text-blue-600 text-white flex items-center justify-center transition-colors shrink-0">
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </div>
-              </div>
-            ))}
-          </div>
-
-        </div>
-
-      </div>
-
-      {activePopup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm animate-fadeIn">
-          <div className="relative w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-2xl transform animate-scaleUp">
-            
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-blue-50 text-blue-600 border border-blue-100">
-                  <ShieldCheck className="w-6 h-6" />
-                </div>
+    <motion.div
+      className="fixed inset-0 z-50 overflow-y-auto bg-[#1a1040]/40 backdrop-blur-md"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0, transition: { duration: 0.2 } }}
+    >
+      <div className="flex min-h-full items-center justify-center p-4" style={{ perspective: 1200 }} onClick={(e) => e.target === e.currentTarget && onClose()}>
+        <motion.div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="why-popup-title"
+          initial={reduce ? false : { opacity: 0, scale: 0.3, y: 120, rotateX: 40, rotateZ: -6 }}
+          animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0, rotateZ: 0 }}
+          exit={{ opacity: 0, scale: 0.8, y: 40, transition: { duration: 0.18 } }}
+          transition={{ type: 'spring', stiffness: 240, damping: 16 }}
+          className={`${body.className} relative w-full max-w-md overflow-hidden rounded-[2rem] border border-[#1a1040]/10 bg-white text-[#1a1040] shadow-2xl shadow-[#1a1040]/30`}
+        >
+          <div className="relative overflow-hidden p-6 sm:p-7" style={{ backgroundColor: accent.fill }}>
+            {!reduce && (
+              <motion.span
+                aria-hidden="true"
+                className="absolute -top-14 -right-14 size-52 rounded-full bg-white/35 blur-2xl"
+                animate={{ scale: [1, 1.3, 1], x: [0, -16, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+              />
+            )}
+            <div className="relative flex items-start justify-between gap-4 text-[#120b2e]">
+              <div className="flex items-center gap-3.5">
+                <motion.span
+                  initial={reduce ? false : { scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 260, damping: 12, delay: 0.15 }}
+                  className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[#1a1040] shadow-lg"
+                  style={{ color: accent.fill }}
+                >
+                  <ShieldCheck className="size-6" aria-hidden="true" />
+                </motion.span>
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">Strategic Advantage</span>
-                  <h3 className="text-base sm:text-lg font-bold text-slate-900">{activePopup.title}</h3>
+                  <span className="text-xs font-bold">Strategic Advantage</span>
+                  <h3 id="why-popup-title" className={`${display.className} text-lg leading-snug font-extrabold sm:text-xl`}>
+                    {item.title}
+                  </h3>
                 </div>
               </div>
               <button
-                onClick={() => setActivePopup(null)}
-                className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 hover:bg-slate-200 flex items-center justify-center transition-colors font-bold text-sm"
+                ref={closeRef}
+                type="button"
+                onClick={onClose}
+                aria-label="Close"
+                className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#120b2e]/20 transition-transform hover:rotate-90 hover:bg-[#120b2e]/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#120b2e] motion-reduce:transition-none"
               >
-                ✕
+                <X size={20} aria-hidden="true" />
               </button>
             </div>
+          </div>
 
-            <p className="text-slate-600 text-sm leading-relaxed mb-6">
-              {activePopup.description}
-            </p>
-
-            <div className="flex items-center justify-end gap-3">
-              <button
-                onClick={() => setActivePopup(null)}
-                className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs tracking-wide transition-all shadow-lg shadow-blue-600/30"
+          <motion.div variants={group(0.15, 0.1)} initial={reduce ? false : 'hidden'} animate="show" className="p-6 sm:p-7">
+            <motion.p variants={fadeUp} className="text-sm leading-7 text-[#4b4380] sm:text-base">
+              {item.description}
+            </motion.p>
+            <motion.div variants={popUp} className="mt-7 flex justify-end">
+              <motion.button
+                type="button"
+                onClick={onClose}
+                whileHover={reduce ? undefined : { scale: 1.06 }}
+                whileTap={reduce ? undefined : { scale: 0.94 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 14 }}
+                className="min-h-12 w-full rounded-full bg-[#ff5c7a] px-8 text-sm font-bold text-white shadow-lg shadow-[#ff5c7a]/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6a58e0] sm:w-auto"
               >
                 Got It
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}
 
-          </div>
-        </div>
+/* ---------- section ---------- */
+export default function Why() {
+  const reduce = useReducedMotion();
+  const [popup, setPopup] = useState(null); // { item, index }
+  const [lit, setLit] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const triggerRef = useRef(null);
+
+  /* live highlight walks down the list until the visitor engages */
+  useEffect(() => {
+    if (reduce || paused || popup) return;
+    const id = setInterval(() => setLit((i) => (i + 1) % BENEFITS.length), 2200);
+    return () => clearInterval(id);
+  }, [reduce, paused, popup]);
+
+  function open(item, index, el) {
+    triggerRef.current = el;
+    setPopup({ item, index });
+  }
+
+  useEffect(() => {
+    if (!popup) return;
+    const onKey = (e) => e.key === 'Escape' && setPopup(null);
+    document.addEventListener('keydown', onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const trigger = triggerRef.current;
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prev;
+      trigger?.focus?.();
+    };
+  }, [popup]);
+
+  return (
+    <section
+      aria-labelledby="why-heading"
+      className={`${body.className} relative isolate flex min-h-screen items-center justify-center overflow-hidden bg-[#faf7ff] px-4 py-20 text-[#1a1040] sm:px-6 sm:py-24 lg:px-8`}
+    >
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 opacity-60"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(26,16,64,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(26,16,64,0.07) 1px, transparent 1px)',
+          backgroundSize: '44px 44px',
+          maskImage: 'radial-gradient(ellipse at 50% 40%, black 20%, transparent 75%)',
+          WebkitMaskImage: 'radial-gradient(ellipse at 50% 40%, black 20%, transparent 75%)',
+        }}
+      />
+      {!reduce && (
+        <>
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none absolute top-1/4 left-0 -z-10 size-96 rounded-full bg-[#ff5c7a]/20 blur-3xl"
+            animate={{ x: [0, 120, 0], y: [0, 60, 0], scale: [1, 1.25, 1] }}
+            transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none absolute right-0 bottom-1/4 -z-10 size-96 rounded-full bg-[#a99bff]/30 blur-3xl"
+            animate={{ x: [0, -120, 0], y: [0, -70, 0], scale: [1, 1.3, 1] }}
+            transition={{ duration: 17, repeat: Infinity, ease: 'easeInOut' }}
+          />
+        </>
       )}
+
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 lg:grid-cols-12 lg:gap-14 px-4 sm:px-6 lg:px-8">
+        {/* header */}
+        <motion.div
+          variants={group(0.05, 0.14)}
+          initial={reduce ? false : 'hidden'}
+          whileInView="show"
+          viewport={{ once: true, margin: '-80px' }}
+          className="flex min-w-0 flex-col items-center space-y-6 text-center lg:col-span-5 lg:items-start lg:text-left"
+        >
+          <motion.div variants={popUp}>
+            <motion.div
+              animate={reduce ? undefined : { y: [0, -8, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              className="inline-flex max-w-full items-center gap-2.5 rounded-full border border-[#1a1040]/10 bg-white px-4 py-2 shadow-lg shadow-[#1a1040]/10"
+            >
+              <span aria-hidden="true" className="relative flex size-2.5 shrink-0">
+                {!reduce && (
+                  <motion.span
+                    className="absolute inset-0 rounded-full bg-[#12b886]"
+                    animate={{ scale: [1, 2.8], opacity: [0.7, 0] }}
+                    transition={{ duration: 1.6, repeat: Infinity, ease: 'easeOut' }}
+                  />
+                )}
+                <span className="relative size-2.5 rounded-full bg-[#12b886]" />
+              </span>
+              <Globe className="size-4 shrink-0 text-[#f08a24]" aria-hidden="true" />
+              <span className="truncate text-xs font-bold tracking-wide text-[#4b4380]">Enterprise Excellence</span>
+            </motion.div>
+          </motion.div>
+
+          <h2
+            id="why-heading"
+            className={`${display.className} text-4xl leading-[1.05] font-extrabold tracking-[-0.035em] text-balance sm:text-6xl`}
+            style={{ perspective: 800 }}
+          >
+            <span className="sr-only">Why Choose Our Wholesale Services?</span>
+            <span aria-hidden="true">
+              <Words text="Why Choose Our" reduce={reduce} />
+              <Words text="Wholesale Services?" shimmer reduce={reduce} />
+            </span>
+          </h2>
+
+          <motion.p variants={fadeUp} className="max-w-md text-base leading-8 text-[#4b4380] sm:text-lg">
+            Click any core advantage below for a live strategic breakdown and operational insight.
+          </motion.p>
+        </motion.div>
+
+        {/* list */}
+        <motion.ul
+          variants={group(0.1, 0.12)}
+          initial={reduce ? false : 'hidden'}
+          whileInView="show"
+          viewport={{ once: true, margin: '-60px' }}
+          onPointerEnter={(e) => e.pointerType !== 'touch' && setPaused(true)}
+          onPointerLeave={() => setPaused(false)}
+          className="min-w-0 space-y-3 sm:space-y-4 lg:col-span-7"
+        >
+          {BENEFITS.map((item, i) => (
+            <BenefitRow key={item.title} item={item} index={i} lit={lit === i} reduce={reduce} onOpen={open} />
+          ))}
+        </motion.ul>
+      </div>
+
+      <AnimatePresence>
+        {popup && <Popup key={popup.item.title} item={popup.item} accent={ACCENTS[popup.index]} reduce={reduce} onClose={() => setPopup(null)} />}
+      </AnimatePresence>
     </section>
   );
 }

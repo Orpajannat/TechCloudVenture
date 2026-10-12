@@ -1,17 +1,34 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { CheckCircle2, ArrowRight, Store, Globe, ShieldCheck, FileText, TrendingUp, Sparkles, PackageCheck } from 'lucide-react';
+import { CheckCircle2, ArrowRight, Store, ShieldCheck, TrendingUp, PackageCheck, Activity, Cpu, Sparkles, RefreshCw } from 'lucide-react';
 
 export default function Wholesale() {
   const [activePopup, setActivePopup] = useState(null);
-  const [isJumping, setIsJumping] = useState(false);
+  const [scanProgress, setScanProgress] = useState(45);
+  const [liveStatusIndex, setLiveStatusIndex] = useState(0);
 
+  const statuses = [
+    "Verifying Tier-1 Supplier Invoices...",
+    "Scanning Amazon US Gating Requirements...",
+    "Optimizing FBA Inventory Routing...",
+    "Securing Brand Authorization Channels..."
+  ];
+
+  // Continuous live motion & progress ticker simulation
   useEffect(() => {
-    const interval = setInterval(() => {
-      setIsJumping((prev) => !prev);
-    }, 2000);
-    return () => clearInterval(interval);
+    const progressInterval = setInterval(() => {
+      setScanProgress((prev) => (prev >= 100 ? 30 : prev + 10));
+    }, 1500);
+
+    const statusInterval = setInterval(() => {
+      setLiveStatusIndex((prev) => (prev + 1) % statuses.length);
+    }, 3000);
+
+    return () => {
+      clearInterval(progressInterval);
+      clearInterval(statusInterval);
+    };
   }, []);
 
   const features = [
@@ -23,111 +40,113 @@ export default function Wholesale() {
   ];
 
   return (
-    <section className="relative min-h-screen bg-white text-slate-900 overflow-hidden py-20 px-4 sm:px-6 lg:px-8 flex items-center justify-center font-sans">
+    <section className="relative min-h-screen bg-[#F0F6FF] text-slate-900 overflow-hidden py-24 px-6 sm:px-10 lg:px-16 font-sans flex items-center justify-center">
       
-      {/* Light background glowing gradient effects */}
-      <div className="absolute top-10 left-10 w-96 h-96 bg-blue-100/60 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
-      <div className="absolute bottom-10 right-10 w-96 h-96 bg-indigo-100/60 rounded-full blur-3xl pointer-events-none animate-pulse delay-1000"></div>
+      {/* Live Animated Background Blue Grid Motion */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#3b82f610_1px,transparent_1px),linear-gradient(to_bottom,#3b82f610_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] pointer-events-none"></div>
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-300/40 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-cyan-300/40 rounded-full blur-[120px] pointer-events-none animate-pulse delay-1000"></div>
 
-      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-16 items-center relative z-10">
         
-        {/* Left Column: Round Live Motion Graphic Container with Jumping Elements */}
-        <div className="lg:col-span-6 flex justify-center relative">
+        {/* Left Column: Completely Redesigned Live Telemetry Command HUD (Replaces the circle) */}
+        <div className="lg:col-span-6 relative">
           
-          <div className="absolute -inset-4 bg-gradient-to-tr from-blue-500/20 to-indigo-500/20 rounded-full blur-2xl animate-pulse"></div>
+          <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-3xl blur-xl opacity-25 animate-pulse"></div>
 
-          {/* Large Round Container */}
-          <div className="relative w-[340px] sm:w-[460px] h-[340px] sm:h-[460px] rounded-full p-4 bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-800 shadow-2xl flex items-center justify-center overflow-hidden border-4 border-white">
+          <div className="relative rounded-3xl bg-white/90 border border-blue-200 p-8 shadow-2xl backdrop-blur-2xl space-y-6">
             
-            {/* Inner Live Motion Background Image / Graphic Representation */}
-            <div className="absolute inset-2 rounded-full bg-slate-900 overflow-hidden flex flex-col items-center justify-center text-center p-6 bg-cover bg-center" style={{ backgroundImage: 'radial-gradient(circle, rgba(15,23,42,0.85) 0%, rgba(2,6,23,0.95) 100%)' }}>
-              
-              {/* Floating Header Badge inside circle */}
-              <div className={`transition-transform duration-500 ${isJumping ? '-translate-y-2' : 'translate-y-0'}`}>
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-semibold backdrop-blur-md mb-4 shadow-lg">
-                  <Globe className="w-3.5 h-3.5 animate-spin duration-3000" />
-                  <span>Amazon FBA USA Hub</span>
+            {/* Top HUD Bar with Live Pulse */}
+            <div className="flex items-center justify-between border-b border-blue-100 pb-4">
+              <div className="flex items-center gap-2 text-xs font-mono font-bold text-blue-700 bg-blue-50 px-3.5 py-1.5 rounded-full border border-blue-200">
+                <Activity className="w-4 h-4 text-blue-600 animate-spin" />
+                US_MARKET_HUD // ACTIVE
+              </div>
+              <span className="flex h-3 w-3 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-600"></span>
+              </span>
+            </div>
+
+            {/* Live Ticker Status changing dynamically */}
+            <div className="p-4 rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-500/20 space-y-1">
+              <div className="text-[10px] font-mono uppercase tracking-widest text-blue-200 flex items-center gap-1.5">
+                <RefreshCw className="w-3 h-3 animate-spin" /> Live Telemetry Feed
+              </div>
+              <div className="text-sm font-bold transition-all duration-500">{statuses[liveStatusIndex]}</div>
+            </div>
+
+            {/* Live Animated Scanning Progress Bar */}
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs font-mono font-bold text-slate-700">
+                <span>Compliance Verification Status</span>
+                <span className="text-blue-600">{scanProgress}%</span>
+              </div>
+              <div className="w-full h-3 bg-blue-100 rounded-full overflow-hidden p-0.5 border border-blue-200">
+                <div 
+                  className="h-full bg-gradient-to-r from-blue-600 to-cyan-500 rounded-full transition-all duration-1000 relative"
+                  style={{ width: `${scanProgress}%` }}
+                >
+                  <div className="absolute inset-0 bg-white/30 animate-pulse"></div>
                 </div>
               </div>
-
-              <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight mb-2">
-                Authorized Wholesale Excellence
-              </h3>
-              
-              <p className="text-xs sm:text-sm text-slate-300 max-w-xs mx-auto mb-6">
-                Transitioning high-risk arbitrage into structured, brand-approved enterprise models.
-              </p>
-
-              {/* Interactive preview pills */}
-              <div className="flex flex-wrap justify-center gap-2">
-                <span onClick={() => setActivePopup(features[0])} className="cursor-pointer px-3 py-1 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full text-[11px] text-white transition-all transform hover:scale-105">
-                  Brand Approvals ↗
-                </span>
-                <span onClick={() => setActivePopup(features[1])} className="cursor-pointer px-3 py-1 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full text-[11px] text-white transition-all transform hover:scale-105">
-                  Valid Invoices ↗
-                </span>
-                <span onClick={() => setActivePopup(features[3])} className="cursor-pointer px-3 py-1 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full text-[11px] text-white transition-all transform hover:scale-105">
-                  Compliance ↗
-                </span>
-              </div>
             </div>
 
-            {/* Jumping Satellite Badge 1 */}
-            <div className={`absolute top-6 left-6 bg-white text-slate-900 px-3 py-2 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-2 transition-transform duration-700 ${isJumping ? '-translate-y-3' : 'translate-y-0'}`}>
-              <ShieldCheck className="w-5 h-5 text-emerald-600" />
-              <div className="text-left">
-                <div className="text-[9px] text-slate-500 font-medium">Account Health</div>
-                <div className="text-xs font-bold text-slate-900">100% Compliant</div>
-              </div>
-            </div>
-
-            {/* Jumping Satellite Badge 2 */}
-            <div className={`absolute bottom-6 right-6 bg-white text-slate-900 px-3 py-2 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-2 transition-transform duration-700 delay-300 ${isJumping ? 'translate-y-3' : 'translate-y-0'}`}>
-              <TrendingUp className="w-5 h-5 text-blue-600" />
-              <div className="text-left">
-                <div className="text-[9px] text-slate-500 font-medium">Growth Model</div>
-                <div className="text-xs font-bold text-slate-900">Stable Scale</div>
+            {/* Interactive Telemetry Pills triggering popups */}
+            <div className="space-y-2 pt-2">
+              <div className="text-xs font-mono uppercase text-slate-400 font-bold tracking-wider">Inspect Core Protocols:</div>
+              <div className="grid grid-cols-2 gap-2.5">
+                {features.slice(0, 4).map((feat, idx) => (
+                  <button 
+                    key={idx}
+                    onClick={() => setActivePopup(feat)}
+                    className="p-3 rounded-xl bg-blue-50/60 hover:bg-blue-100 border border-blue-200/80 text-left text-xs font-semibold text-blue-900 transition-all transform hover:-translate-y-1 flex items-center justify-between group"
+                  >
+                    <span className="truncate">{feat.title}</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                  </button>
+                ))}
               </div>
             </div>
 
           </div>
         </div>
 
-        {/* Right Column: Typography & Content */}
-        <div className="lg:col-span-6 space-y-6">
+        {/* Right Column: Editorial Typography & Interactive List */}
+        <div className="lg:col-span-6 space-y-8">
           
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold shadow-sm">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100/80 border border-blue-200 text-blue-800 text-xs font-bold shadow-sm">
             <Store className="w-4 h-4 text-blue-600" />
-            <span>Wholesale Services for Sellers</span>
+            <span>Authorized Wholesale Infrastructure</span>
           </div>
 
-          <div className="space-y-3">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 leading-[1.15]">
-              Amazon Wholesale Services for Sellers in the <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">USA Market</span>
+          <div className="space-y-4">
+            <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-slate-900 leading-[1.1]">
+              Amazon Wholesale Services for Sellers in the <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600">USA Market</span>
             </h1>
-            <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-              Our Wholesale Services for Sellers are designed for Amazon sellers who want to operate legitimate, brand-authorized wholesale businesses in the Amazon USA marketplace. Wholesale success on Amazon requires more than listings and ads—it requires:
+            <p className="text-slate-600 text-base leading-relaxed">
+              Our Wholesale Services for Sellers are designed for Amazon sellers who want to operate legitimate, brand-authorized wholesale businesses in the Amazon USA marketplace. Wholesale success requires:
             </p>
           </div>
 
-          {/* Feature Checklist with Click Trigger for Sudden Pop Up */}
-          <div className="space-y-2.5 pt-2">
+          {/* Interactive Feature Stack */}
+          <div className="space-y-3">
             {features.map((item, idx) => (
               <div 
                 key={idx}
                 onClick={() => setActivePopup(item)}
-                className="group flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-blue-50/50 border border-slate-200/80 hover:border-blue-300 transition-all cursor-pointer shadow-sm"
+                className="group flex items-center justify-between p-4 rounded-2xl bg-white hover:bg-blue-600 hover:text-white border border-blue-100 hover:border-blue-600 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-xl hover:shadow-blue-500/20 transform hover:translate-x-1"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-7 h-7 rounded-xl bg-blue-100 text-blue-600 group-hover:bg-white group-hover:text-blue-600 flex items-center justify-center shrink-0 transition-colors">
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
-                  <span className="text-xs sm:text-sm font-semibold text-slate-800 group-hover:text-blue-700 transition-colors">
+                  <span className="text-sm font-bold text-slate-800 group-hover:text-white transition-colors">
                     {item.title}
                   </span>
                 </div>
-                <span className="text-xs text-blue-600 font-medium opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
-                  View details <ArrowRight className="w-3.5 h-3.5" />
+                <span className="text-xs font-mono font-bold text-blue-600 group-hover:text-cyan-200 transition-colors flex items-center gap-1">
+                  Inspect <ArrowRight className="w-3.5 h-3.5" />
                 </span>
               </div>
             ))}
@@ -137,32 +156,22 @@ export default function Wholesale() {
             We help sellers move away from high risk arbitrage models and build <strong className="text-slate-900 font-bold">structured wholesale operations</strong> that are scalable and sustainable.
           </p>
 
-          <div className="pt-2">
-            <button 
-              onClick={() => setActivePopup(features[0])}
-              className="px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm tracking-wider uppercase shadow-lg shadow-slate-900/20 transition-all flex items-center gap-2 group"
-            >
-              <span>Wholesale Service</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
-
         </div>
 
       </div>
 
-      {/* Sudden Pop Up Modal */}
+      {/* Sudden Pop Up Modal with Smooth Motion */}
       {activePopup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm animate-fadeIn">
-          <div className="relative w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-2xl transform animate-scaleUp">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-blue-950/40 backdrop-blur-md animate-fadeIn">
+          <div className="relative w-full max-w-md bg-white border border-blue-200 rounded-3xl p-6 sm:p-8 shadow-2xl transform animate-scaleUp">
             
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-blue-100">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-blue-50 text-blue-600 border border-blue-100">
+                <div className="p-3 rounded-2xl bg-blue-600 text-white shadow-md shadow-blue-500/30">
                   <PackageCheck className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">Wholesale Protocol</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 font-mono">Verified Protocol</span>
                   <h3 className="text-base sm:text-lg font-bold text-slate-900">{activePopup.title}</h3>
                 </div>
               </div>
@@ -174,16 +183,16 @@ export default function Wholesale() {
               </button>
             </div>
 
-            <p className="text-slate-600 text-sm leading-relaxed mb-6">
+            <p className="text-slate-600 text-sm leading-relaxed mb-6 font-medium">
               {activePopup.desc} Proper documentation and verified distributor relationships safeguard your Amazon store from suspensions and secure uninterrupted buy-box ownership in the USA market.
             </p>
 
-            <div className="flex items-center justify-end gap-3">
+            <div className="flex items-center justify-end">
               <button
                 onClick={() => setActivePopup(null)}
-                className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs tracking-wide transition-all shadow-lg shadow-blue-600/30"
+                className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs tracking-wide transition-all shadow-lg shadow-blue-600/30"
               >
-                Got It
+                Acknowledge Protocol
               </button>
             </div>
 

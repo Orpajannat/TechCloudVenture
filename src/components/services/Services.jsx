@@ -1,208 +1,680 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { ShieldCheck, TrendingUp, CheckCircle2, ArrowRight, Store, Globe, PackageCheck, Layers, FileText, Search, UserCheck } from 'lucide-react';
+import { Fragment, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { Bricolage_Grotesque, DM_Sans } from 'next/font/google';
+import { Store, Award, ShieldCheck, ArrowRight, Activity, Zap, CheckCircle2, X } from 'lucide-react';
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+} from 'framer-motion';
 
-export default function Services() {
-  const [activePopup, setActivePopup] = useState(null);
-  const [isJumping, setIsJumping] = useState(false);
+const display = Bricolage_Grotesque({ subsets: ['latin'], weight: ['500', '700', '800'] });
+const body = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
+/* ---------- data (unchanged) ---------- */
+const MODELS = {
+  wholesale: {
+    id: 'wholesale',
+    tab: 'Wholesale Sellers',
+    model: 'MODEL 01',
+    icon: Store,
+    title: 'Amazon Wholesale Infrastructure',
+    subtitle: 'Authorized Channel & Gating Protection',
+    desc: 'Rigorous invoice verification and authorized vendor pathways built to eliminate suspension risks and scale stable inventory.',
+    stats: ['100% Invoice Audited', 'Zero-Gating Risk', '+48.2% Average ROI'],
+  },
+  brands: {
+    id: 'brands',
+    tab: 'Private Label & Brands',
+    model: 'MODEL 02',
+    icon: Award,
+    title: 'Private Label & Brand Control',
+    subtitle: 'Defensive IP & Marketplace Sovereignty',
+    desc: 'Full Brand Registry tier-3 enforcement, unauthorized reseller tracking, and margin-protected advertising ecosystems.',
+    stats: ['Registry Level-3', 'Defensive IP Shield', '4.8x ROAS Multiplier'],
+  },
+};
+const ORDER = ['wholesale', 'brands'];
+const SEED = [58, 62, 60, 66, 64, 70, 68, 72, 69, 75, 73, 78, 76, 74, 79, 82, 80, 84, 83, 86];
+
+/* ---------- variants ---------- */
+const group = (delay = 0, gap = 0.1) => ({
+  hidden: {},
+  show: { transition: { delayChildren: delay, staggerChildren: gap } },
+});
+const pop = {
+  hidden: { opacity: 0, scale: 0.4, y: 30, rotate: -4 },
+  show: { opacity: 1, scale: 1, y: 0, rotate: 0, transition: { type: 'spring', stiffness: 420, damping: 15 } },
+};
+const fadeUp = {
+  hidden: { opacity: 0, y: 24, filter: 'blur(8px)' },
+  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.55, ease: 'easeOut' } },
+};
+const word = {
+  hidden: { opacity: 0, y: 60, rotateX: -70, filter: 'blur(10px)' },
+  show: { opacity: 1, y: 0, rotateX: 0, filter: 'blur(0px)', transition: { type: 'spring', stiffness: 130, damping: 14 } },
+};
+const panelItem = {
+  hidden: { opacity: 0, x: -24, scale: 0.96 },
+  show: { opacity: 1, x: 0, scale: 1, transition: { type: 'spring', stiffness: 300, damping: 22 } },
+  exit: { opacity: 0, x: 18, transition: { duration: 0.12 } },
+};
+
+/* ---------- helpers ---------- */
+function Words({ text, shimmer, reduce }) {
+  return text.split(' ').map((w, i) => (
+    <Fragment key={`${w}-${i}`}>
+      <motion.span variants={word} className="inline-block" style={{ transformOrigin: '50% 100%' }}>
+        {shimmer ? (
+          <motion.span
+            className="inline-block bg-clip-text text-transparent"
+            style={{ backgroundImage: 'linear-gradient(90deg,#ff5c7a,#ff9a5c,#12b886,#ff5c7a)', backgroundSize: '300% 100%' }}
+            animate={reduce ? undefined : { backgroundPositionX: ['0%', '300%'] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
+          >
+            {w}
+          </motion.span>
+        ) : (
+          w
+        )}
+      </motion.span>{' '}
+    </Fragment>
+  ));
+}
+
+function CountUp({ value }) {
+  const mv = useMotionValue(value);
+  const spring = useSpring(mv, { stiffness: 70, damping: 18 });
+  const text = useTransform(spring, (v) => Math.round(v));
   useEffect(() => {
-    const interval = setInterval(() => {
-      setIsJumping((prev) => !prev);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
+    mv.set(value);
+  }, [value, mv]);
+  return <motion.span>{text}</motion.span>;
+}
 
-  const services = [
-    {
-      id: 'brand-approval',
-      title: 'Brand Approval Service',
-      subtitle: 'Selling wholesale without proper brand approval exposes sellers to account suspension, listing removals, and invoice rejections.',
-      description: 'Our Brand Approval Service helps sellers secure direct brand/distributor approval, valid wholesale invoices, compliance-ready documentation, and winning wholesale products aligned with ROI goals.',
-      icon: <ShieldCheck className="w-6 h-6 text-blue-600" />,
-      badge: 'Compliance First',
-      points: [
-        'Direct brand or distributor approval',
-        'Valid wholesale invoices',
-        'Compliance-ready documentation',
-        'Winning wholesale products aligned with ROI goals'
-      ]
-    },
-    {
-      id: 'store-management',
-      title: 'Wholesale Store Management',
-      subtitle: 'Our Wholesale Store Management Service is for sellers who want a professionally managed Amazon wholesale business without day-to-day operational stress.',
-      description: 'We manage your store end to end, including brand approvals, inventory planning, listing optimization, policy compliance, and performance reporting.',
-      icon: <Store className="w-6 h-6 text-indigo-600" />,
-      badge: 'End-to-End Growth',
-      points: [
-        'Brand approvals & sourcing support',
-        'Inventory planning & stock control',
-        'Listing management & optimization',
-        'Account health & policy compliance',
-        'Performance monitoring & reporting'
-      ]
-    },
-    {
-      id: 'product-research',
-      title: 'Wholesale Product Research',
-      subtitle: 'Already have access to a brand or distributor? Our Wholesale Product Research Service helps sellers identify profitable, low-risk wholesale products.',
-      description: 'We analyze ROI & profit margins, Buy Box & seller dominance, sales demand & price stability, and category risk & ungating feasibility using real Amazon data.',
-      icon: <Search className="w-6 h-6 text-cyan-600" />,
-      badge: 'Data-Driven',
-      points: [
-        'ROI & profit margins',
-        'Buy Box & seller dominance',
-        'Sales demand & price stability',
-        'Category risk & ungating feasibility'
-      ]
-    },
-    {
-      id: 'reseller-setup',
-      title: 'Authorized Reseller Setup',
-      subtitle: 'If you already have a brand or distributor but need official approval to sell on Amazon, our Authorized Reseller Setup Service provides structured support.',
-      description: 'We handle professional reseller application setup, brand or distributor communication, approval follow-ups, and LOA and documentation guidance.',
-      icon: <UserCheck className="w-6 h-6 text-emerald-600" />,
-      badge: 'Official Setup',
-      points: [
-        'Professional reseller application setup',
-        'Brand or distributor communication',
-        'Approval follow-ups',
-        'LOA and documentation guidance'
-      ]
-    }
-  ];
+/* ---------- gauge ---------- */
+function Gauge({ value, reduce }) {
+  const R = 42;
+  const C = 2 * Math.PI * R;
+  return (
+    <div className="relative mx-auto size-40 shrink-0 sm:size-48">
+      {!reduce && (
+        <motion.svg
+          aria-hidden="true"
+          viewBox="0 0 100 100"
+          className="absolute -inset-3 size-[calc(100%+1.5rem)]"
+          animate={{ rotate: -360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+        >
+          <circle cx="50" cy="50" r="49" fill="none" stroke="#ff5c7a" strokeOpacity="0.6" strokeWidth="0.7" strokeDasharray="1.5 3.5" />
+        </motion.svg>
+      )}
+      <svg viewBox="0 0 100 100" className="size-full -rotate-90" aria-hidden="true">
+        <defs>
+          <linearGradient id="gauge-grad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#ff5c7a" />
+            <stop offset="100%" stopColor="#12b886" />
+          </linearGradient>
+        </defs>
+        <circle cx="50" cy="50" r={R} fill="none" stroke="rgba(26,16,64,0.1)" strokeWidth="9" />
+        <motion.circle
+          cx="50"
+          cy="50"
+          r={R}
+          fill="none"
+          stroke="url(#gauge-grad)"
+          strokeWidth="9"
+          strokeLinecap="round"
+          strokeDasharray={C}
+          initial={{ strokeDashoffset: C }}
+          animate={{ strokeDashoffset: C * (1 - value / 100) }}
+          transition={{ type: 'spring', stiffness: 60, damping: 18 }}
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className={`${display.className} text-5xl font-extrabold tracking-tight text-[#1a1040] sm:text-6xl`}>
+          <CountUp value={value} />
+          <span className="text-2xl text-[#0d8a66]">%</span>
+        </span>
+        <span className="text-xs font-medium text-[#4b4380]">Efficiency</span>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- sparkline ---------- */
+function Sparkline({ points }) {
+  const W = 240;
+  const H = 84;
+  const step = W / (points.length - 1);
+  const ys = points.map((v) => H - 8 - ((v - 40) / 60) * (H - 16));
+  const line = ys.map((y, i) => `${i === 0 ? 'M' : 'L'}${(i * step).toFixed(1)} ${y.toFixed(1)}`).join(' ');
+  const area = `${line} L${W} ${H} L0 ${H} Z`;
+  const lastY = ys[ys.length - 1];
 
   return (
-    <section id="service-options" className="relative min-h-screen bg-slate-50 text-slate-900 overflow-hidden py-20 px-4 sm:px-6 lg:px-8 font-sans">
-      
-      <div className="absolute top-10 left-10 w-96 h-96 bg-blue-100/60 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
-      <div className="absolute bottom-10 right-10 w-96 h-96 bg-indigo-100/60 rounded-full blur-3xl pointer-events-none animate-pulse delay-1000"></div>
+    <svg viewBox={`0 0 ${W} ${H}`} className="h-28 w-full overflow-visible" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="spark-fill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#12b886" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#12b886" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      {[0.25, 0.5, 0.75].map((f) => (
+        <line key={f} x1="0" x2={W} y1={H * f} y2={H * f} stroke="rgba(26,16,64,0.12)" strokeWidth="1" strokeDasharray="3 4" vectorEffect="non-scaling-stroke" />
+      ))}
+      <motion.path d={area} fill="url(#spark-fill)" animate={{ d: area }} transition={{ duration: 0.9, ease: 'easeOut' }} />
+      <motion.path
+        d={line}
+        fill="none"
+        stroke="#12b886"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        vectorEffect="non-scaling-stroke"
+        animate={{ d: line }}
+        transition={{ duration: 0.9, ease: 'easeOut' }}
+      />
+      <motion.circle cx={W} r="4.5" fill="#ff5c7a" stroke="#fff" strokeWidth="2" vectorEffect="non-scaling-stroke" animate={{ cy: lastY }} transition={{ duration: 0.9, ease: 'easeOut' }} />
+    </svg>
+  );
+}
 
-      <div className="max-w-7xl mx-auto space-y-16 relative z-10">
-        
-        <div className="text-center max-w-3xl mx-auto space-y-4">
-          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 shadow-md transition-transform duration-500 ${isJumping ? '-translate-y-2' : 'translate-y-0'}`}>
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
-            <Globe className="w-4 h-4 text-blue-600" />
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-700">Specialized Amazon USA Solutions</span>
+/* ---------- pop-up dialog ---------- */
+function StartDialog({ model, onClose, reduce }) {
+  const Icon = model.icon;
+  const closeRef = useRef(null);
+
+  useEffect(() => {
+    closeRef.current?.focus();
+  }, []);
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-50 overflow-y-auto bg-[#1a1040]/40 backdrop-blur-md"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0, transition: { duration: 0.2 } }}
+    >
+      <div
+        className="flex min-h-full items-center justify-center p-4"
+        style={{ perspective: 1200 }}
+        onClick={(e) => e.target === e.currentTarget && onClose()}
+      >
+        <motion.div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="start-dialog-title"
+          initial={reduce ? false : { opacity: 0, scale: 0.3, y: 120, rotateX: 40, rotateZ: -6 }}
+          animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0, rotateZ: 0 }}
+          exit={{ opacity: 0, scale: 0.8, y: 40, transition: { duration: 0.18 } }}
+          transition={{ type: 'spring', stiffness: 240, damping: 16 }}
+          className={`${body.className} relative w-full max-w-lg overflow-hidden rounded-[2rem] border border-[#1a1040]/10 bg-white text-[#1a1040] shadow-2xl shadow-[#1a1040]/30`}
+        >
+          <div className="relative overflow-hidden bg-linear-to-br from-[#ff5c7a] to-[#ff9a5c] p-6 text-white sm:p-7">
+            {!reduce && (
+              <motion.span
+                aria-hidden="true"
+                className="absolute -top-14 -right-14 size-52 rounded-full bg-white/30 blur-2xl"
+                animate={{ scale: [1, 1.3, 1], x: [0, -16, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+              />
+            )}
+            <div className="relative flex items-start justify-between gap-4">
+              <div className="flex items-center gap-3.5">
+                <motion.span
+                  initial={reduce ? false : { scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 260, damping: 12, delay: 0.15 }}
+                  className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[#1a1040] text-[#ff5c7a] shadow-lg"
+                >
+                  <Icon size={26} aria-hidden="true" />
+                </motion.span>
+                <div>
+                  <span className="text-xs font-semibold text-white/90">{model.model} · Ready to start</span>
+                  <h3 id="start-dialog-title" className={`${display.className} text-lg leading-snug font-bold sm:text-xl`}>
+                    {model.title}
+                  </h3>
+                </div>
+              </div>
+              <button
+                ref={closeRef}
+                type="button"
+                onClick={onClose}
+                aria-label="Close"
+                className="flex size-11 shrink-0 items-center justify-center rounded-full bg-black/20 text-white transition-transform hover:rotate-90 hover:bg-black/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:transition-none"
+              >
+                <X size={20} aria-hidden="true" />
+              </button>
+            </div>
           </div>
-          <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900">
-            Professional <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Amazon Wholesale Services</span>
-          </h2>
-          <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-            Built for serious sellers looking to establish sustainable, policy-compliant, and highly profitable operations in the USA marketplace.
-          </p>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {services.map((item) => (
-            <div
-              key={item.id}
-              onClick={() => setActivePopup(item)}
-              className={`group bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col justify-between cursor-pointer relative overflow-hidden ${
-                isJumping ? 'transform -translate-y-1' : 'transform translate-y-0'
-              }`}
-            >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-bl-full pointer-events-none transition-transform group-hover:scale-110"></div>
+          <motion.div variants={group(0.15, 0.09)} initial={reduce ? false : 'hidden'} animate="show" className="p-6 sm:p-7">
+            <motion.p variants={fadeUp} className="text-sm leading-7 text-[#4b4380] sm:text-base">
+              {model.desc}
+            </motion.p>
+            <ul className="mt-5 space-y-2.5">
+              {model.stats.map((s) => (
+                <motion.li key={s} variants={pop} className="flex items-center gap-3 rounded-2xl border border-[#1a1040]/10 bg-[#f6f2ff] px-4 py-3 text-sm font-semibold">
+                  <CheckCircle2 size={18} className="shrink-0 text-[#0d8a66]" aria-hidden="true" />
+                  {s}
+                </motion.li>
+              ))}
+            </ul>
+            <div className="mt-7 flex flex-wrap justify-end gap-2.5">
+              <motion.button
+                type="button"
+                onClick={onClose}
+                whileHover={reduce ? undefined : { scale: 1.05 }}
+                whileTap={reduce ? undefined : { scale: 0.94 }}
+                className="min-h-11 rounded-full border border-[#1a1040]/20 px-5 text-sm font-semibold text-[#1a1040] hover:bg-[#f3eeff] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6a58e0]"
+              >
+                Maybe later
+              </motion.button>
+              <motion.div whileHover={reduce ? undefined : { scale: 1.05 }} whileTap={reduce ? undefined : { scale: 0.94 }}>
+                <Link
+                  href="/contact"
+                  onClick={onClose}
+                  className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#5cf2c1] px-6 text-sm font-bold text-[#120b2e] shadow-lg shadow-[#5cf2c1]/25 hover:bg-[#7bf6d0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  Talk to our team <ArrowRight size={16} aria-hidden="true" />
+                </Link>
+              </motion.div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}
 
-              <div className="relative space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="p-3 rounded-2xl bg-blue-50 border border-blue-100 text-blue-600 shadow-inner group-hover:scale-110 transition-transform">
-                    {item.icon}
-                  </div>
-                  <span className="text-[10px] font-bold px-3 py-1 rounded-full bg-slate-100 text-blue-700 border border-slate-200 uppercase tracking-wider">
-                    {item.badge}
+/* ---------- section ---------- */
+export default function SpecializedAmazonSection() {
+  const reduce = useReducedMotion();
+  const [active, setActive] = useState('wholesale');
+  const [interacted, setInteracted] = useState(false);
+  const [hover, setHover] = useState(false);
+  const [dialog, setDialog] = useState(false);
+  const [points, setPoints] = useState(SEED);
+  const triggerRef = useRef(null);
+  const tabRefs = useRef({});
+
+  /* pointer tilt for the dashboard (desktop only, skipped for reduced motion) */
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const rx = useSpring(useTransform(my, [-0.5, 0.5], [6, -6]), { stiffness: 120, damping: 18 });
+  const ry = useSpring(useTransform(mx, [-0.5, 0.5], [-8, 8]), { stiffness: 120, damping: 18 });
+  function onTilt(e) {
+    if (reduce || e.pointerType === 'touch') return;
+    const r = e.currentTarget.getBoundingClientRect();
+    mx.set((e.clientX - r.left) / r.width - 0.5);
+    my.set((e.clientY - r.top) / r.height - 0.5);
+  }
+  function resetTilt() {
+    mx.set(0);
+    my.set(0);
+  }
+
+  const current = MODELS[active];
+  const progress = Math.round(points[points.length - 1]);
+
+  useEffect(() => {
+    if (reduce) return;
+    const id = setInterval(() => {
+      setPoints((p) => {
+        const last = p[p.length - 1];
+        const next = Math.min(98, Math.max(60, last + (Math.random() - 0.45) * 9));
+        return [...p.slice(1), next];
+      });
+    }, 1400);
+    return () => clearInterval(id);
+  }, [reduce]);
+
+  useEffect(() => {
+    if (reduce || interacted || hover || dialog) return;
+    const id = setInterval(() => setActive((a) => (a === 'wholesale' ? 'brands' : 'wholesale')), 8000);
+    return () => clearInterval(id);
+  }, [reduce, interacted, hover, dialog]);
+
+  function choose(id, focus = false) {
+    setInteracted(true);
+    setActive(id);
+    if (focus) tabRefs.current[id]?.focus();
+  }
+
+  function onTabKey(e) {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+      e.preventDefault();
+      choose(active === 'wholesale' ? 'brands' : 'wholesale', true);
+    }
+  }
+
+  useEffect(() => {
+    if (!dialog) return;
+    const onKey = (e) => e.key === 'Escape' && setDialog(false);
+    document.addEventListener('keydown', onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const trigger = triggerRef.current;
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prev;
+      trigger?.focus?.();
+    };
+  }, [dialog]);
+
+  return (
+    <section
+      aria-labelledby="specialized-heading"
+      className={`${body.className} relative isolate overflow-hidden bg-[#faf7ff] px-4 py-20 text-[#1a1040] sm:px-8 sm:py-24 lg:px-16 lg:py-28`}
+    >
+      {/* grid floor */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 opacity-60"
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(26,16,64,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(26,16,64,0.07) 1px, transparent 1px)',
+          backgroundSize: '44px 44px',
+          maskImage: 'radial-gradient(ellipse at 50% 30%, black 20%, transparent 75%)',
+          WebkitMaskImage: 'radial-gradient(ellipse at 50% 30%, black 20%, transparent 75%)',
+        }}
+      />
+      {!reduce && (
+        <>
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-32 left-1/4 -z-10 size-96 rounded-full bg-[#ff5c7a]/35 blur-3xl"
+            animate={{ x: [0, 140, 0], y: [0, 60, 0], scale: [1, 1.25, 1] }}
+            transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-20 bottom-0 -z-10 size-96 rounded-full bg-[#12b886]/30 blur-3xl"
+            animate={{ x: [0, -120, 0], y: [0, -80, 0], scale: [1, 1.3, 1] }}
+            transition={{ duration: 17, repeat: Infinity, ease: 'easeInOut' }}
+          />
+        </>
+      )}
+
+      <div className="mx-auto w-full max-w-6xl">
+        {/* ============ HERO (centered) ============ */}
+        <motion.div
+          variants={group(0.05, 0.14)}
+          initial={reduce ? false : 'hidden'}
+          whileInView="show"
+          viewport={{ once: true, margin: '-80px' }}
+          className="flex flex-col items-center text-center"
+        >
+          <motion.div variants={pop} className="inline-flex max-w-full items-center gap-2.5 rounded-full border border-[#1a1040]/10 bg-white px-4 py-2 shadow-md shadow-[#1a1040]/10">
+            <span aria-hidden="true" className="relative flex size-2.5 shrink-0">
+              {!reduce && (
+                <motion.span
+                  className="absolute inset-0 rounded-full bg-[#12b886]"
+                  animate={{ scale: [1, 2.8], opacity: [0.7, 0] }}
+                  transition={{ duration: 1.6, repeat: Infinity, ease: 'easeOut' }}
+                />
+              )}
+              <span className="relative size-2.5 rounded-full bg-[#12b886]" />
+            </span>
+            <span className="truncate text-xs font-semibold tracking-wide text-[#4b4380]">Tech Cloud Global Venture // USA</span>
+          </motion.div>
+
+          <h1
+            id="specialized-heading"
+            className={`${display.className} mt-7 max-w-7xl text-[2.6rem] leading-[1.02] font-extrabold tracking-[-0.035em] text-balance sm:text-6xl lg:text-7xl xl:text-8xl`}
+            style={{ perspective: 800 }}
+          >
+            <span className="sr-only">Scale on Amazon with Compliance &amp; Trust</span>
+            <span aria-hidden="true">
+              <Words text="Scale on Amazon with" reduce={reduce} />
+              <span className="relative inline-block">
+                <Words text="Compliance & Trust" shimmer reduce={reduce} />
+                <svg viewBox="0 0 200 10" preserveAspectRatio="none" className="absolute -bottom-1 left-0 h-2.5 w-full" fill="none">
+                  <motion.path
+                    d="M2 5 Q 14 0 26 5 T 50 5 T 74 5 T 98 5 T 122 5 T 146 5 T 170 5 T 198 5"
+                    stroke="#12b886"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    vectorEffect="non-scaling-stroke"
+                    variants={{
+                      hidden: { pathLength: 0, opacity: 0 },
+                      show: { pathLength: 1, opacity: 1, transition: { duration: 1.1, ease: 'easeInOut', delay: 0.9 } },
+                    }}
+                  />
+                </svg>
+              </span>
+            </span>
+          </h1>
+
+          <motion.p variants={fadeUp} className="mt-7 max-w-2xl text-base leading-8 text-[#4b4380] sm:text-lg">
+            We provide specialized, high-velocity USA Amazon services built around data-driven execution and uncompromised compliance.
+          </motion.p>
+
+          {/* model switcher */}
+          <motion.div
+            variants={group(0.1, 0.12)}
+            role="tablist"
+            aria-label="Choose your model"
+            onKeyDown={onTabKey}
+            onPointerEnter={(e) => e.pointerType !== 'touch' && setHover(true)}
+            onPointerLeave={() => setHover(false)}
+            className="mt-10 grid w-full max-w-2xl gap-3 text-left sm:grid-cols-2 sm:gap-4"
+          >
+            {ORDER.map((id) => {
+              const m = MODELS[id];
+              const Icon = m.icon;
+              const on = id === active;
+              return (
+                <motion.button
+                  key={id}
+                  ref={(el) => (tabRefs.current[id] = el)}
+                  variants={pop}
+                  type="button"
+                  role="tab"
+                  id={`tab-${id}`}
+                  aria-selected={on}
+                  aria-controls="telemetry-panel"
+                  tabIndex={on ? 0 : -1}
+                  onClick={() => choose(id)}
+                  whileHover={reduce ? undefined : { y: -6, rotate: id === 'wholesale' ? -1 : 1 }}
+                  whileTap={reduce ? undefined : { scale: 0.95 }}
+                  transition={{ type: 'spring', stiffness: 350, damping: 18 }}
+                  className="relative isolate flex min-h-28 flex-col justify-between overflow-hidden rounded-3xl border border-[#1a1040]/10 bg-white p-5 shadow-lg shadow-[#1a1040]/8 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6a58e0]"
+                >
+                  {on && (
+                    <motion.span
+                      layoutId="model-bg"
+                      aria-hidden="true"
+                      transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 360, damping: 28 }}
+                      className="absolute inset-0 -z-10 bg-linear-to-br from-[#ff5c7a] to-[#ff9a5c] shadow-xl shadow-[#ff5c7a]/30"
+                    />
+                  )}
+                  <span className="flex items-center justify-between">
+                    <motion.span
+                      animate={on && !reduce ? { y: [0, -6, 0], rotate: [0, -8, 0] } : { y: 0, rotate: 0 }}
+                      transition={{ duration: 1.6, repeat: on ? Infinity : 0, ease: 'easeInOut' }}
+                      className={on ? 'text-white' : 'text-[#0d8a66]'}
+                    >
+                      <Icon size={28} aria-hidden="true" />
+                    </motion.span>
+                    <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold transition-colors duration-300 ${on ? 'bg-black/25 text-white' : 'bg-[#f3eeff] text-[#4b4380]'}`}>
+                      {m.model}
+                    </span>
+                  </span>
+                  <span className={`${display.className} mt-4 block text-lg font-bold ${on ? 'text-white' : 'text-[#1a1040]'}`}>{m.tab}</span>
+                </motion.button>
+              );
+            })}
+          </motion.div>
+        </motion.div>
+
+        {/* ============ DASHBOARD (full width, tilts with pointer) ============ */}
+        <motion.div
+          initial={reduce ? false : { opacity: 0, y: 120, scale: 0.8, rotateX: 25 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ type: 'spring', stiffness: 100, damping: 15, delay: 0.1 }}
+          className="relative mt-14 sm:mt-20"
+          style={{ perspective: 1400 }}
+        >
+          <motion.div
+            onPointerMove={onTilt}
+            onPointerLeave={resetTilt}
+            style={reduce ? undefined : { rotateX: rx, rotateY: ry, transformStyle: 'preserve-3d' }}
+            className="relative"
+          >
+            <motion.div
+              aria-hidden="true"
+              className="absolute -inset-3 rounded-[2.5rem] bg-linear-to-r from-[#ff5c7a] via-[#ff9a5c] to-[#5cf2c1] blur-2xl"
+              animate={reduce ? { opacity: 0.2 } : { opacity: [0.15, 0.35, 0.15] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            />
+
+            <div className="relative overflow-hidden rounded-[2rem] border border-[#1a1040]/10 bg-white/95 shadow-2xl shadow-[#1a1040]/15 backdrop-blur">
+              {/* chrome */}
+              <div className="flex items-center justify-between gap-3 border-b border-[#1a1040]/10 bg-[#f6f2ff] px-4 py-3 sm:px-6">
+                <div className="flex min-w-0 items-center gap-4">
+                  <span aria-hidden="true" className="hidden gap-1.5 sm:flex">
+                    <span className="size-2.5 rounded-full bg-[#ff5c7a]" />
+                    <span className="size-2.5 rounded-full bg-[#ffb86b]" />
+                    <span className="size-2.5 rounded-full bg-[#12b886]" />
+                  </span>
+                  <span className="flex min-w-0 items-center gap-2 rounded-full border border-[#1a1040]/10 bg-white px-3 py-1 text-[11px] font-bold text-[#4b4380] sm:text-xs">
+                    <motion.span aria-hidden="true" className="flex shrink-0" animate={reduce ? undefined : { rotate: 360 }} transition={{ duration: 2.4, repeat: Infinity, ease: 'linear' }}>
+                      <Activity size={14} />
+                    </motion.span>
+                    <span className="truncate">LIVE COMPLIANCE STREAM</span>
                   </span>
                 </div>
-
-                <div className="space-y-2">
-                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
-                    {item.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed line-clamp-3">
-                    {item.subtitle}
-                  </p>
-                </div>
-
-                <div className="space-y-2 pt-2 border-t border-slate-100">
-                  <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Key Highlights:</div>
-                  <ul className="space-y-1.5">
-                    {item.points.slice(0, 3).map((pt, idx) => (
-                      <li key={idx} className="flex items-center text-xs text-slate-700">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 mr-2 shrink-0" />
-                        <span className="truncate">{pt}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <motion.span aria-hidden="true" animate={reduce ? undefined : { scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }} className="shrink-0 text-[#0d8a66]">
+                  <ShieldCheck size={24} />
+                </motion.span>
               </div>
 
-              <div className="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between">
-                <span className="text-xs font-semibold text-blue-600 group-hover:underline flex items-center gap-1">
-                  Click for detailed breakdown <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </span>
-                <span className="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-blue-600 group-hover:text-white text-slate-600 flex items-center justify-center transition-colors">
-                  ↗
-                </span>
+              {!reduce && (
+                <motion.span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-y-0 -left-1/3 z-10 w-1/4 -skew-x-12 bg-linear-to-r from-transparent via-[#ff5c7a]/10 to-transparent"
+                  animate={{ x: ['0%', '650%'] }}
+                  transition={{ duration: 2.6, repeat: Infinity, repeatDelay: 6, ease: 'easeInOut', delay: 1.5 }}
+                />
+              )}
+
+              <div id="telemetry-panel" role="tabpanel" aria-labelledby={`tab-${active}`} className="grid gap-6 p-5 sm:p-8 lg:grid-cols-12 lg:gap-8">
+                {/* title block */}
+                <div className="min-w-0 lg:col-span-5">
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                      key={active}
+                      variants={group(0, 0.08)}
+                      initial={reduce ? false : 'hidden'}
+                      animate="show"
+                      exit={reduce ? undefined : 'exit'}
+                      className="space-y-3"
+                    >
+                      <motion.span variants={panelItem} className="block text-sm font-bold text-[#0d8a66]">
+                        {current.subtitle}
+                      </motion.span>
+                      <motion.h2 variants={panelItem} className={`${display.className} text-3xl leading-[1.08] font-extrabold tracking-tight text-balance sm:text-4xl`}>
+                        {current.title}
+                      </motion.h2>
+                      <motion.p variants={panelItem} className="pt-1 text-sm leading-7 text-[#4b4380] sm:text-base sm:leading-8">
+                        {current.desc}
+                      </motion.p>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+
+                {/* live telemetry */}
+                <div className="grid min-w-0 items-center gap-5 rounded-3xl border border-[#1a1040]/10 bg-[#f6f2ff] p-4 sm:grid-cols-[auto_1fr] sm:gap-8 sm:p-6 lg:col-span-7">
+                  <Gauge value={progress} reduce={reduce} />
+                  <div className="min-w-0">
+                    <div className="mb-2 flex items-center justify-between gap-2 text-xs font-bold text-[#4b4380]">
+                      <span>Execution Efficiency Index</span>
+                      <span className="flex items-center gap-1.5 text-[#0d8a66]">
+                        <span aria-hidden="true" className="relative flex size-2">
+                          {!reduce && (
+                            <motion.span
+                              className="absolute inset-0 rounded-full bg-[#12b886]"
+                              animate={{ scale: [1, 2.6], opacity: [0.7, 0] }}
+                              transition={{ duration: 1.4, repeat: Infinity, ease: 'easeOut' }}
+                            />
+                          )}
+                          <span className="relative size-2 rounded-full bg-[#12b886]" />
+                        </span>
+                        live
+                      </span>
+                    </div>
+                    <Sparkline points={points} />
+                  </div>
+                </div>
+
+                {/* metric tiles */}
+                <motion.ul
+                  key={active}
+                  variants={group(0.1, 0.1)}
+                  initial={reduce ? false : 'hidden'}
+                  animate="show"
+                  className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-3 lg:col-span-12"
+                >
+                  {current.stats.map((st, i) => (
+                    <motion.li
+                      key={st}
+                      variants={pop}
+                      whileHover={reduce ? undefined : { scale: 1.05, y: -4, rotate: i === 1 ? 0 : i === 0 ? -1.5 : 1.5 }}
+                      className="relative overflow-hidden rounded-2xl border border-[#1a1040]/10 bg-[#faf7ff] p-4 text-center sm:p-5"
+                    >
+                      <div className="text-[11px] font-bold text-[#e0305a]">METRIC 0{i + 1}</div>
+                      <div className={`${display.className} mt-1 text-lg font-bold text-[#1a1040] sm:text-xl`}>{st}</div>
+                    </motion.li>
+                  ))}
+                </motion.ul>
+
+                {/* footer */}
+                <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[#1a1040]/10 pt-6 lg:col-span-12">
+                  <span className="flex items-center gap-2 text-xs font-bold text-[#4b4380]">
+                    <motion.span aria-hidden="true" className="flex" animate={reduce ? undefined : { y: [0, -5, 0] }} transition={{ duration: 1.1, repeat: Infinity, repeatDelay: 0.8 }}>
+                      <Zap size={16} className="text-[#f08a24]" />
+                    </motion.span>
+                    Status: Verified Secure
+                  </span>
+                  <motion.button
+                    type="button"
+                    aria-haspopup="dialog"
+                    onClick={(e) => {
+                      triggerRef.current = e.currentTarget;
+                      setDialog(true);
+                    }}
+                    whileHover={reduce ? undefined : { scale: 1.07 }}
+                    whileTap={reduce ? undefined : { scale: 0.92 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 14 }}
+                    className="group relative inline-flex min-h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-[#ff5c7a] px-8 text-sm font-bold text-white shadow-lg shadow-[#ff5c7a]/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6a58e0] min-[480px]:w-auto"
+                  >
+                    {!reduce && (
+                      <motion.span
+                        aria-hidden="true"
+                        className="absolute inset-y-0 -left-1/3 w-1/4 -skew-x-12 bg-linear-to-r from-transparent via-white/40 to-transparent"
+                        animate={{ x: ['0%', '700%'] }}
+                        transition={{ duration: 1.4, repeat: Infinity, repeatDelay: 3, ease: 'easeInOut' }}
+                      />
+                    )}
+                    <span className="relative">Initialize</span>
+                    <ArrowRight size={16} aria-hidden="true" className="relative transition-transform group-hover:translate-x-1 motion-reduce:transition-none" />
+                  </motion.button>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
-
+          </motion.div>
+        </motion.div>
       </div>
 
-      {activePopup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm animate-fadeIn">
-          <div className="relative w-full max-w-xl bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-2xl transform animate-scaleUp">
-            
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-2xl bg-blue-50 text-blue-600 border border-blue-100">
-                  {activePopup.icon}
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">{activePopup.badge}</span>
-                  <h3 className="text-lg font-bold text-slate-900">{activePopup.title}</h3>
-                </div>
-              </div>
-              <button
-                onClick={() => setActivePopup(null)}
-                className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 hover:bg-slate-200 flex items-center justify-center transition-colors font-bold text-sm"
-              >
-                ✕
-              </button>
-            </div>
-
-            <p className="text-slate-600 text-sm leading-relaxed mb-6">
-              {activePopup.description}
-            </p>
-
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 mb-6 space-y-3">
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-500">Comprehensive Scope & Deliverables:</div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {activePopup.points.map((pt, idx) => (
-                  <div key={idx} className="flex items-start gap-2 text-xs text-slate-700 bg-white p-2 rounded-xl border border-slate-200/60 shadow-sm">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <span>{pt}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-3">
-              <button
-                onClick={() => setActivePopup(null)}
-                className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs tracking-wide transition-all shadow-lg shadow-blue-600/30"
-              >
-                Close & Return
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
+      <AnimatePresence>{dialog && <StartDialog key="dlg" model={current} reduce={reduce} onClose={() => setDialog(false)} />}</AnimatePresence>
     </section>
   );
 }
