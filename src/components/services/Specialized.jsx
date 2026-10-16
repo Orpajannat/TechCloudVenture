@@ -4,17 +4,197 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Bricolage_Grotesque, DM_Sans } from 'next/font/google';
 import { Store, Award, ShieldCheck, ArrowRight, Activity, Zap, CheckCircle2, X } from 'lucide-react';
-import {
-  AnimatePresence,
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-  useTransform,
-} from 'framer-motion';
+import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion';
 
 const display = Bricolage_Grotesque({ subsets: ['latin'], weight: ['500', '700', '800'] });
 const body = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
+
+/* ---------- variants ---------- */
+const group = (delay = 0, gap = 0.1) => ({
+  hidden: {},
+  show: { transition: { delayChildren: delay, staggerChildren: gap } },
+});
+const pop = {
+  hidden: { opacity: 0, scale: 0.4, y: 30, rotate: -4 },
+  show: { opacity: 1, scale: 1, y: 0, rotate: 0, transition: { type: 'spring', stiffness: 420, damping: 15 } },
+};
+const fadeUp = {
+  hidden: { opacity: 0, y: 24, filter: 'blur(8px)' },
+  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.55, ease: 'easeOut' } },
+};
+const word = {
+  hidden: { opacity: 0, y: 60, rotateX: -70, filter: 'blur(10px)' },
+  show: { opacity: 1, y: 0, rotateX: 0, filter: 'blur(0px)', transition: { type: 'spring', stiffness: 130, damping: 14 } },
+};
+
+/* ---------- helpers ---------- */
+function Words({ text, shimmer, reduce }) {
+  return text.split(' ').map((w, i) => (
+    <Fragment key={`${w}-${i}`}>
+      <motion.span variants={word} className="inline-block" style={{ transformOrigin: '50% 100%' }}>
+        {shimmer ? (
+          <motion.span
+            className="inline-block bg-clip-text text-transparent"
+            style={{ backgroundImage: 'linear-gradient(90deg,#2563eb,#0ea5e9,#0891b2,#2563eb)', backgroundSize: '300% 100%' }}
+            animate={reduce ? undefined : { backgroundPositionX: ['0%', '300%'] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
+          >
+            {w}
+          </motion.span>
+        ) : (
+          w
+        )}
+      </motion.span>{' '}
+    </Fragment>
+  ));
+}
+
+function useDialog(open, onClose, triggerRef) {
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => e.key === 'Escape' && onClose();
+    document.addEventListener('keydown', onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const trigger = triggerRef.current;
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prev;
+      trigger?.focus?.();
+    };
+  }, [open]);
+}
+
+/* pop-up: springs in small and tilted, header coloured with the card's accent */
+function Dialog({ id, Icon, eyebrow, title, accent, onClose, reduce, children }) {
+  const closeRef = useRef(null);
+  useEffect(() => {
+    closeRef.current?.focus();
+  }, []);
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-50 overflow-y-auto bg-[#0b2a5b]/40 backdrop-blur-md"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0, transition: { duration: 0.2 } }}
+    >
+      <div className="flex min-h-full items-center justify-center p-4" style={{ perspective: 1200 }} onClick={(e) => e.target === e.currentTarget && onClose()}>
+        <motion.div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={id}
+          initial={reduce ? false : { opacity: 0, scale: 0.3, y: 120, rotateX: 40, rotateZ: -6 }}
+          animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0, rotateZ: 0 }}
+          exit={{ opacity: 0, scale: 0.8, y: 40, transition: { duration: 0.18 } }}
+          transition={{ type: 'spring', stiffness: 240, damping: 16 }}
+          className={`${body.className} relative w-full max-w-xl overflow-hidden rounded-[2rem] border border-[#0b2a5b]/10 bg-white text-[#0b2a5b] shadow-2xl shadow-[#0b2a5b]/30`}
+        >
+          <div className="relative overflow-hidden p-6 sm:p-7" style={{ backgroundColor: accent }}>
+            {!reduce && (
+              <motion.span
+                aria-hidden="true"
+                className="absolute -top-14 -right-14 size-52 rounded-full bg-white/35 blur-2xl"
+                animate={{ scale: [1, 1.3, 1], x: [0, -16, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+              />
+            )}
+            <div className="relative flex items-start justify-between gap-4 text-[#0b2a5b]">
+              <div className="flex min-w-0 items-center gap-3.5">
+                <motion.span
+                  initial={reduce ? false : { scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 260, damping: 12, delay: 0.15 }}
+                  className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[#0b2a5b] shadow-lg"
+                  style={{ color: accent }}
+                >
+                  <Icon className="size-6" aria-hidden="true" />
+                </motion.span>
+                <div className="min-w-0">
+                  <span className="text-xs font-bold">{eyebrow}</span>
+                  <h3 id={id} className={`${display.className} text-lg leading-snug font-extrabold sm:text-xl`}>
+                    {title}
+                  </h3>
+                </div>
+              </div>
+              <button
+                ref={closeRef}
+                type="button"
+                onClick={onClose}
+                aria-label="Close"
+                className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#0b2a5b]/20 transition-transform hover:rotate-90 hover:bg-[#0b2a5b]/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0b2a5b] motion-reduce:transition-none"
+              >
+                <X size={20} aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+          <motion.div variants={group(0.15, 0.09)} initial={reduce ? false : 'hidden'} animate="show" className="p-6 sm:p-7">
+            {children}
+          </motion.div>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* grid floor + drifting blue glows shared by every section */
+function Backdrop({ reduce, mask = '50% 30%' }) {
+  return (
+    <>
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 opacity-60"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(11,42,91,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(11,42,91,0.07) 1px, transparent 1px)',
+          backgroundSize: '44px 44px',
+          maskImage: `radial-gradient(ellipse at ${mask}, black 20%, transparent 75%)`,
+          WebkitMaskImage: `radial-gradient(ellipse at ${mask}, black 20%, transparent 75%)`,
+        }}
+      />
+      {!reduce && (
+        <>
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-32 left-1/4 -z-10 size-96 rounded-full bg-[#2563eb]/20 blur-3xl"
+            animate={{ x: [0, 140, 0], y: [0, 60, 0], scale: [1, 1.25, 1] }}
+            transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-20 bottom-0 -z-10 size-96 rounded-full bg-[#22d3ee]/30 blur-3xl"
+            animate={{ x: [0, -120, 0], y: [0, -80, 0], scale: [1, 1.3, 1] }}
+            transition={{ duration: 17, repeat: Infinity, ease: 'easeInOut' }}
+          />
+        </>
+      )}
+    </>
+  );
+}
+
+function Badge({ reduce, icon, children }) {
+  return (
+    <motion.div variants={pop}>
+      <motion.div
+        animate={reduce ? undefined : { y: [0, -8, 0] }}
+        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+        className="inline-flex max-w-full items-center gap-2.5 rounded-full border border-[#0b2a5b]/10 bg-white px-4 py-2 shadow-lg shadow-[#0b2a5b]/10"
+      >
+        <span aria-hidden="true" className="relative flex size-2.5 shrink-0">
+          {!reduce && (
+            <motion.span
+              className="absolute inset-0 rounded-full bg-[#0891b2]"
+              animate={{ scale: [1, 2.8], opacity: [0.7, 0] }}
+              transition={{ duration: 1.6, repeat: Infinity, ease: 'easeOut' }}
+            />
+          )}
+          <span className="relative size-2.5 rounded-full bg-[#0891b2]" />
+        </span>
+        {icon}
+        <span className="truncate text-xs font-bold tracking-wide text-[#3b5b8c]">{children}</span>
+      </motion.div>
+    </motion.div>
+  );
+}
 
 /* ---------- data (unchanged) ---------- */
 const MODELS = {
@@ -42,50 +222,11 @@ const MODELS = {
 const ORDER = ['wholesale', 'brands'];
 const SEED = [58, 62, 60, 66, 64, 70, 68, 72, 69, 75, 73, 78, 76, 74, 79, 82, 80, 84, 83, 86];
 
-/* ---------- variants ---------- */
-const group = (delay = 0, gap = 0.1) => ({
-  hidden: {},
-  show: { transition: { delayChildren: delay, staggerChildren: gap } },
-});
-const pop = {
-  hidden: { opacity: 0, scale: 0.4, y: 30, rotate: -4 },
-  show: { opacity: 1, scale: 1, y: 0, rotate: 0, transition: { type: 'spring', stiffness: 420, damping: 15 } },
-};
-const fadeUp = {
-  hidden: { opacity: 0, y: 24, filter: 'blur(8px)' },
-  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.55, ease: 'easeOut' } },
-};
-const word = {
-  hidden: { opacity: 0, y: 60, rotateX: -70, filter: 'blur(10px)' },
-  show: { opacity: 1, y: 0, rotateX: 0, filter: 'blur(0px)', transition: { type: 'spring', stiffness: 130, damping: 14 } },
-};
 const panelItem = {
   hidden: { opacity: 0, x: -24, scale: 0.96 },
   show: { opacity: 1, x: 0, scale: 1, transition: { type: 'spring', stiffness: 300, damping: 22 } },
   exit: { opacity: 0, x: 18, transition: { duration: 0.12 } },
 };
-
-/* ---------- helpers ---------- */
-function Words({ text, shimmer, reduce }) {
-  return text.split(' ').map((w, i) => (
-    <Fragment key={`${w}-${i}`}>
-      <motion.span variants={word} className="inline-block" style={{ transformOrigin: '50% 100%' }}>
-        {shimmer ? (
-          <motion.span
-            className="inline-block bg-clip-text text-transparent"
-            style={{ backgroundImage: 'linear-gradient(90deg,#ff5c7a,#ffb86b,#5cf2c1,#ff5c7a)', backgroundSize: '300% 100%' }}
-            animate={reduce ? undefined : { backgroundPositionX: ['0%', '300%'] }}
-            transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
-          >
-            {w}
-          </motion.span>
-        ) : (
-          w
-        )}
-      </motion.span>{' '}
-    </Fragment>
-  ));
-}
 
 function CountUp({ value }) {
   const mv = useMotionValue(value);
@@ -111,17 +252,17 @@ function Gauge({ value, reduce }) {
           animate={{ rotate: -360 }}
           transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
         >
-          <circle cx="50" cy="50" r="49" fill="none" stroke="#ff5c7a" strokeOpacity="0.6" strokeWidth="0.7" strokeDasharray="1.5 3.5" />
+          <circle cx="50" cy="50" r="49" fill="none" stroke="#2563eb" strokeOpacity="0.6" strokeWidth="0.7" strokeDasharray="1.5 3.5" />
         </motion.svg>
       )}
       <svg viewBox="0 0 100 100" className="size-full -rotate-90" aria-hidden="true">
         <defs>
           <linearGradient id="gauge-grad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#ff5c7a" />
-            <stop offset="100%" stopColor="#5cf2c1" />
+            <stop offset="0%" stopColor="#2563eb" />
+            <stop offset="100%" stopColor="#22d3ee" />
           </linearGradient>
         </defs>
-        <circle cx="50" cy="50" r={R} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="9" />
+        <circle cx="50" cy="50" r={R} fill="none" stroke="rgba(11,42,91,0.1)" strokeWidth="9" />
         <motion.circle
           cx="50"
           cy="50"
@@ -137,11 +278,11 @@ function Gauge({ value, reduce }) {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className={`${display.className} text-5xl font-extrabold tracking-tight text-white sm:text-6xl`}>
+        <span className={`${display.className} text-5xl font-extrabold tracking-tight text-[#0b2a5b] sm:text-6xl`}>
           <CountUp value={value} />
-          <span className="text-2xl text-[#5cf2c1]">%</span>
+          <span className="text-2xl text-[#0e7490]">%</span>
         </span>
-        <span className="text-xs font-medium text-[#c9c3ff]">Efficiency</span>
+        <span className="text-xs font-medium text-[#3b5b8c]">Efficiency</span>
       </div>
     </div>
   );
@@ -161,18 +302,18 @@ function Sparkline({ points }) {
     <svg viewBox={`0 0 ${W} ${H}`} className="h-28 w-full overflow-visible" preserveAspectRatio="none" aria-hidden="true">
       <defs>
         <linearGradient id="spark-fill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#5cf2c1" stopOpacity="0.4" />
-          <stop offset="100%" stopColor="#5cf2c1" stopOpacity="0" />
+          <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
         </linearGradient>
       </defs>
       {[0.25, 0.5, 0.75].map((f) => (
-        <line key={f} x1="0" x2={W} y1={H * f} y2={H * f} stroke="rgba(255,255,255,0.12)" strokeWidth="1" strokeDasharray="3 4" vectorEffect="non-scaling-stroke" />
+        <line key={f} x1="0" x2={W} y1={H * f} y2={H * f} stroke="rgba(11,42,91,0.14)" strokeWidth="1" strokeDasharray="3 4" vectorEffect="non-scaling-stroke" />
       ))}
       <motion.path d={area} fill="url(#spark-fill)" animate={{ d: area }} transition={{ duration: 0.9, ease: 'easeOut' }} />
       <motion.path
         d={line}
         fill="none"
-        stroke="#5cf2c1"
+        stroke="#0891b2"
         strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -180,7 +321,7 @@ function Sparkline({ points }) {
         animate={{ d: line }}
         transition={{ duration: 0.9, ease: 'easeOut' }}
       />
-      <motion.circle cx={W} r="4.5" fill="#ff5c7a" stroke="#fff" strokeWidth="2" vectorEffect="non-scaling-stroke" animate={{ cy: lastY }} transition={{ duration: 0.9, ease: 'easeOut' }} />
+      <motion.circle cx={W} r="4.5" fill="#2563eb" stroke="#fff" strokeWidth="2" vectorEffect="non-scaling-stroke" animate={{ cy: lastY }} transition={{ duration: 0.9, ease: 'easeOut' }} />
     </svg>
   );
 }
@@ -196,16 +337,12 @@ function StartDialog({ model, onClose, reduce }) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 overflow-y-auto bg-[#0a0620]/70 backdrop-blur-md"
+      className="fixed inset-0 z-50 overflow-y-auto bg-[#0b2a5b]/40 backdrop-blur-md"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, transition: { duration: 0.2 } }}
     >
-      <div
-        className="flex min-h-full items-center justify-center p-4"
-        style={{ perspective: 1200 }}
-        onClick={(e) => e.target === e.currentTarget && onClose()}
-      >
+      <div className="flex min-h-full items-center justify-center p-4" style={{ perspective: 1200 }} onClick={(e) => e.target === e.currentTarget && onClose()}>
         <motion.div
           role="dialog"
           aria-modal="true"
@@ -214,9 +351,9 @@ function StartDialog({ model, onClose, reduce }) {
           animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0, rotateZ: 0 }}
           exit={{ opacity: 0, scale: 0.8, y: 40, transition: { duration: 0.18 } }}
           transition={{ type: 'spring', stiffness: 240, damping: 16 }}
-          className={`${body.className} relative w-full max-w-lg overflow-hidden rounded-[2rem] border border-white/15 bg-[#1a1040] text-white shadow-2xl shadow-black/60`}
+          className={`${body.className} relative w-full max-w-lg overflow-hidden rounded-[2rem] border border-[#0b2a5b]/10 bg-white text-[#0b2a5b] shadow-2xl shadow-[#0b2a5b]/30`}
         >
-          <div className="relative overflow-hidden bg-linear-to-br from-[#ff5c7a] to-[#ff9a5c] p-6 text-white sm:p-7">
+          <div className="relative overflow-hidden bg-linear-to-br from-[#2563eb] to-[#0ea5e9] p-6 text-white sm:p-7">
             {!reduce && (
               <motion.span
                 aria-hidden="true"
@@ -231,7 +368,7 @@ function StartDialog({ model, onClose, reduce }) {
                   initial={reduce ? false : { scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: 'spring', stiffness: 260, damping: 12, delay: 0.15 }}
-                  className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[#1a1040] text-[#ff5c7a] shadow-lg"
+                  className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[#2563eb] shadow-lg"
                 >
                   <Icon size={26} aria-hidden="true" />
                 </motion.span>
@@ -255,13 +392,13 @@ function StartDialog({ model, onClose, reduce }) {
           </div>
 
           <motion.div variants={group(0.15, 0.09)} initial={reduce ? false : 'hidden'} animate="show" className="p-6 sm:p-7">
-            <motion.p variants={fadeUp} className="text-sm leading-7 text-[#d9d5ff] sm:text-base">
+            <motion.p variants={fadeUp} className="text-sm leading-7 text-[#3b5b8c] sm:text-base">
               {model.desc}
             </motion.p>
             <ul className="mt-5 space-y-2.5">
               {model.stats.map((s) => (
-                <motion.li key={s} variants={pop} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/6 px-4 py-3 text-sm font-semibold">
-                  <CheckCircle2 size={18} className="shrink-0 text-[#5cf2c1]" aria-hidden="true" />
+                <motion.li key={s} variants={pop} className="flex items-center gap-3 rounded-2xl border border-[#0b2a5b]/10 bg-[#eaf3ff] px-4 py-3 text-sm font-semibold">
+                  <CheckCircle2 size={18} className="shrink-0 text-[#0891b2]" aria-hidden="true" />
                   {s}
                 </motion.li>
               ))}
@@ -272,7 +409,7 @@ function StartDialog({ model, onClose, reduce }) {
                 onClick={onClose}
                 whileHover={reduce ? undefined : { scale: 1.05 }}
                 whileTap={reduce ? undefined : { scale: 0.94 }}
-                className="min-h-11 rounded-full border border-white/25 px-5 text-sm font-semibold text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5cf2c1]"
+                className="min-h-11 rounded-full border border-[#0b2a5b]/20 px-5 text-sm font-semibold text-[#0b2a5b] hover:bg-[#e3efff] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4f46e5]"
               >
                 Maybe later
               </motion.button>
@@ -280,7 +417,7 @@ function StartDialog({ model, onClose, reduce }) {
                 <Link
                   href="/contact"
                   onClick={onClose}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#5cf2c1] px-6 text-sm font-bold text-[#120b2e] shadow-lg shadow-[#5cf2c1]/25 hover:bg-[#7bf6d0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#22d3ee] px-6 text-sm font-bold text-[#0b2a5b] shadow-lg shadow-[#22d3ee]/30 hover:bg-[#67e8f9] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0b2a5b]"
                 >
                   Talk to our team <ArrowRight size={16} aria-hidden="true" />
                 </Link>
@@ -354,53 +491,14 @@ export default function SpecializedAmazonSection() {
     }
   }
 
-  useEffect(() => {
-    if (!dialog) return;
-    const onKey = (e) => e.key === 'Escape' && setDialog(false);
-    document.addEventListener('keydown', onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    const trigger = triggerRef.current;
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prev;
-      trigger?.focus?.();
-    };
-  }, [dialog]);
+  useDialog(dialog, () => setDialog(false), triggerRef);
 
   return (
     <section
       aria-labelledby="specialized-heading"
-      className={`${body.className} relative isolate overflow-hidden bg-[#120b2e] px-4 py-20 text-[#edebff] sm:px-8 sm:py-24 lg:px-16 lg:py-28`}
+      className={`${body.className} relative isolate overflow-hidden bg-[#f0f7ff] px-4 py-20 text-[#0b2a5b] sm:px-8 sm:py-24 lg:px-16 lg:py-28`}
     >
-      {/* grid floor */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 -z-10 opacity-60"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)',
-          backgroundSize: '44px 44px',
-          maskImage: 'radial-gradient(ellipse at 50% 30%, black 20%, transparent 75%)',
-          WebkitMaskImage: 'radial-gradient(ellipse at 50% 30%, black 20%, transparent 75%)',
-        }}
-      />
-      {!reduce && (
-        <>
-          <motion.div
-            aria-hidden="true"
-            className="pointer-events-none absolute -top-32 left-1/4 -z-10 size-96 rounded-full bg-[#ff5c7a]/35 blur-3xl"
-            animate={{ x: [0, 140, 0], y: [0, 60, 0], scale: [1, 1.25, 1] }}
-            transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
-          />
-          <motion.div
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-20 bottom-0 -z-10 size-96 rounded-full bg-[#5cf2c1]/25 blur-3xl"
-            animate={{ x: [0, -120, 0], y: [0, -80, 0], scale: [1, 1.3, 1] }}
-            transition={{ duration: 17, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        </>
-      )}
+      <Backdrop reduce={reduce} />
 
       <div className="mx-auto w-full max-w-6xl">
         {/* ============ HERO (centered) ============ */}
@@ -411,18 +509,18 @@ export default function SpecializedAmazonSection() {
           viewport={{ once: true, margin: '-80px' }}
           className="flex flex-col items-center text-center"
         >
-          <motion.div variants={pop} className="inline-flex max-w-full items-center gap-2.5 rounded-full border border-white/15 bg-white/8 px-4 py-2 backdrop-blur">
+          <motion.div variants={pop} className="inline-flex max-w-full items-center gap-2.5 rounded-full border border-[#0b2a5b]/10 bg-white px-4 py-2 shadow-md shadow-[#0b2a5b]/10">
             <span aria-hidden="true" className="relative flex size-2.5 shrink-0">
               {!reduce && (
                 <motion.span
-                  className="absolute inset-0 rounded-full bg-[#5cf2c1]"
+                  className="absolute inset-0 rounded-full bg-[#0891b2]"
                   animate={{ scale: [1, 2.8], opacity: [0.7, 0] }}
                   transition={{ duration: 1.6, repeat: Infinity, ease: 'easeOut' }}
                 />
               )}
-              <span className="relative size-2.5 rounded-full bg-[#5cf2c1]" />
+              <span className="relative size-2.5 rounded-full bg-[#0891b2]" />
             </span>
-            <span className="truncate text-xs font-semibold tracking-wide text-[#d9d5ff]">Tech Cloud Global Venture // USA</span>
+            <span className="truncate text-xs font-semibold tracking-wide text-[#3b5b8c]">Tech Cloud Global Venture // USA</span>
           </motion.div>
 
           <h1
@@ -438,7 +536,7 @@ export default function SpecializedAmazonSection() {
                 <svg viewBox="0 0 200 10" preserveAspectRatio="none" className="absolute -bottom-1 left-0 h-2.5 w-full" fill="none">
                   <motion.path
                     d="M2 5 Q 14 0 26 5 T 50 5 T 74 5 T 98 5 T 122 5 T 146 5 T 170 5 T 198 5"
-                    stroke="#5cf2c1"
+                    stroke="#0891b2"
                     strokeWidth="2.5"
                     strokeLinecap="round"
                     vectorEffect="non-scaling-stroke"
@@ -452,7 +550,7 @@ export default function SpecializedAmazonSection() {
             </span>
           </h1>
 
-          <motion.p variants={fadeUp} className="mt-7 max-w-2xl text-base leading-8 text-[#c9c3ff] sm:text-lg">
+          <motion.p variants={fadeUp} className="mt-7 max-w-2xl text-base leading-8 text-[#3b5b8c] sm:text-lg">
             We provide specialized, high-velocity USA Amazon services built around data-driven execution and uncompromised compliance.
           </motion.p>
 
@@ -485,29 +583,29 @@ export default function SpecializedAmazonSection() {
                   whileHover={reduce ? undefined : { y: -6, rotate: id === 'wholesale' ? -1 : 1 }}
                   whileTap={reduce ? undefined : { scale: 0.95 }}
                   transition={{ type: 'spring', stiffness: 350, damping: 18 }}
-                  className="relative isolate flex min-h-28 flex-col justify-between overflow-hidden rounded-3xl border border-white/15 bg-white/6 p-5 backdrop-blur focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#5cf2c1]"
+                  className="relative isolate flex min-h-28 flex-col justify-between overflow-hidden rounded-3xl border border-[#0b2a5b]/10 bg-white p-5 shadow-lg shadow-[#0b2a5b]/8 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#4f46e5]"
                 >
                   {on && (
                     <motion.span
                       layoutId="model-bg"
                       aria-hidden="true"
                       transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 360, damping: 28 }}
-                      className="absolute inset-0 -z-10 bg-linear-to-br from-[#ff5c7a] to-[#ff9a5c] shadow-xl shadow-[#ff5c7a]/30"
+                      className="absolute inset-0 -z-10 bg-linear-to-br from-[#2563eb] to-[#0ea5e9] shadow-xl shadow-[#2563eb]/30"
                     />
                   )}
                   <span className="flex items-center justify-between">
                     <motion.span
                       animate={on && !reduce ? { y: [0, -6, 0], rotate: [0, -8, 0] } : { y: 0, rotate: 0 }}
                       transition={{ duration: 1.6, repeat: on ? Infinity : 0, ease: 'easeInOut' }}
-                      className={on ? 'text-white' : 'text-[#5cf2c1]'}
+                      className={on ? 'text-white' : 'text-[#0e7490]'}
                     >
                       <Icon size={28} aria-hidden="true" />
                     </motion.span>
-                    <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold transition-colors duration-300 ${on ? 'bg-black/25 text-white' : 'bg-white/10 text-[#d9d5ff]'}`}>
+                    <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold transition-colors duration-300 ${on ? 'bg-black/25 text-white' : 'bg-[#e3efff] text-[#3b5b8c]'}`}>
                       {m.model}
                     </span>
                   </span>
-                  <span className={`${display.className} mt-4 block text-lg font-bold text-white`}>{m.tab}</span>
+                  <span className={`${display.className} mt-4 block text-lg font-bold transition-colors duration-300 ${on ? 'text-white' : 'text-[#0b2a5b]'}`}>{m.tab}</span>
                 </motion.button>
               );
             })}
@@ -531,28 +629,28 @@ export default function SpecializedAmazonSection() {
           >
             <motion.div
               aria-hidden="true"
-              className="absolute -inset-3 rounded-[2.5rem] bg-linear-to-r from-[#ff5c7a] via-[#ff9a5c] to-[#5cf2c1] blur-2xl"
+              className="absolute -inset-3 rounded-[2.5rem] bg-linear-to-r from-[#2563eb] via-[#0ea5e9] to-[#22d3ee] blur-2xl"
               animate={reduce ? { opacity: 0.2 } : { opacity: [0.15, 0.35, 0.15] }}
               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
             />
 
-            <div className="relative overflow-hidden rounded-[2rem] border border-white/15 bg-[#1a1040]/95 shadow-2xl shadow-black/50 backdrop-blur">
+            <div className="relative overflow-hidden rounded-[2rem] border border-[#0b2a5b]/10 bg-white/95 shadow-2xl shadow-[#0b2a5b]/15 backdrop-blur">
               {/* chrome */}
-              <div className="flex items-center justify-between gap-3 border-b border-white/10 bg-white/5 px-4 py-3 sm:px-6">
+              <div className="flex items-center justify-between gap-3 border-b border-[#0b2a5b]/10 bg-[#eaf3ff] px-4 py-3 sm:px-6">
                 <div className="flex min-w-0 items-center gap-4">
                   <span aria-hidden="true" className="hidden gap-1.5 sm:flex">
-                    <span className="size-2.5 rounded-full bg-[#ff5c7a]" />
-                    <span className="size-2.5 rounded-full bg-[#ffb86b]" />
-                    <span className="size-2.5 rounded-full bg-[#5cf2c1]" />
+                    <span className="size-2.5 rounded-full bg-[#2563eb]" />
+                    <span className="size-2.5 rounded-full bg-[#38bdf8]" />
+                    <span className="size-2.5 rounded-full bg-[#22d3ee]" />
                   </span>
-                  <span className="flex min-w-0 items-center gap-2 rounded-full border border-white/15 bg-white/8 px-3 py-1 text-[11px] font-bold text-[#d9d5ff] sm:text-xs">
+                  <span className="flex min-w-0 items-center gap-2 rounded-full border border-[#0b2a5b]/10 bg-white px-3 py-1 text-[11px] font-bold text-[#3b5b8c] sm:text-xs">
                     <motion.span aria-hidden="true" className="flex shrink-0" animate={reduce ? undefined : { rotate: 360 }} transition={{ duration: 2.4, repeat: Infinity, ease: 'linear' }}>
                       <Activity size={14} />
                     </motion.span>
                     <span className="truncate">LIVE COMPLIANCE STREAM</span>
                   </span>
                 </div>
-                <motion.span aria-hidden="true" animate={reduce ? undefined : { scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }} className="shrink-0 text-[#5cf2c1]">
+                <motion.span aria-hidden="true" animate={reduce ? undefined : { scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }} className="shrink-0 text-[#0e7490]">
                   <ShieldCheck size={24} />
                 </motion.span>
               </div>
@@ -560,7 +658,7 @@ export default function SpecializedAmazonSection() {
               {!reduce && (
                 <motion.span
                   aria-hidden="true"
-                  className="pointer-events-none absolute inset-y-0 -left-1/3 z-10 w-1/4 -skew-x-12 bg-linear-to-r from-transparent via-white/10 to-transparent"
+                  className="pointer-events-none absolute inset-y-0 -left-1/3 z-10 w-1/4 -skew-x-12 bg-linear-to-r from-transparent via-[#2563eb]/10 to-transparent"
                   animate={{ x: ['0%', '650%'] }}
                   transition={{ duration: 2.6, repeat: Infinity, repeatDelay: 6, ease: 'easeInOut', delay: 1.5 }}
                 />
@@ -578,13 +676,13 @@ export default function SpecializedAmazonSection() {
                       exit={reduce ? undefined : 'exit'}
                       className="space-y-3"
                     >
-                      <motion.span variants={panelItem} className="block text-sm font-bold text-[#5cf2c1]">
+                      <motion.span variants={panelItem} className="block text-sm font-bold text-[#0e7490]">
                         {current.subtitle}
                       </motion.span>
                       <motion.h2 variants={panelItem} className={`${display.className} text-3xl leading-[1.08] font-extrabold tracking-tight text-balance sm:text-4xl`}>
                         {current.title}
                       </motion.h2>
-                      <motion.p variants={panelItem} className="pt-1 text-sm leading-7 text-[#c9c3ff] sm:text-base sm:leading-8">
+                      <motion.p variants={panelItem} className="pt-1 text-sm leading-7 text-[#3b5b8c] sm:text-base sm:leading-8">
                         {current.desc}
                       </motion.p>
                     </motion.div>
@@ -592,21 +690,21 @@ export default function SpecializedAmazonSection() {
                 </div>
 
                 {/* live telemetry */}
-                <div className="grid min-w-0 items-center gap-5 rounded-3xl border border-white/10 bg-black/20 p-4 sm:grid-cols-[auto_1fr] sm:gap-8 sm:p-6 lg:col-span-7">
+                <div className="grid min-w-0 items-center gap-5 rounded-3xl border border-[#0b2a5b]/10 bg-[#eaf3ff] p-4 sm:grid-cols-[auto_1fr] sm:gap-8 sm:p-6 lg:col-span-7">
                   <Gauge value={progress} reduce={reduce} />
                   <div className="min-w-0">
-                    <div className="mb-2 flex items-center justify-between gap-2 text-xs font-bold text-[#d9d5ff]">
+                    <div className="mb-2 flex items-center justify-between gap-2 text-xs font-bold text-[#3b5b8c]">
                       <span>Execution Efficiency Index</span>
-                      <span className="flex items-center gap-1.5 text-[#5cf2c1]">
+                      <span className="flex items-center gap-1.5 text-[#0e7490]">
                         <span aria-hidden="true" className="relative flex size-2">
                           {!reduce && (
                             <motion.span
-                              className="absolute inset-0 rounded-full bg-[#5cf2c1]"
+                              className="absolute inset-0 rounded-full bg-[#0891b2]"
                               animate={{ scale: [1, 2.6], opacity: [0.7, 0] }}
                               transition={{ duration: 1.4, repeat: Infinity, ease: 'easeOut' }}
                             />
                           )}
-                          <span className="relative size-2 rounded-full bg-[#5cf2c1]" />
+                          <span className="relative size-2 rounded-full bg-[#0891b2]" />
                         </span>
                         live
                       </span>
@@ -628,19 +726,19 @@ export default function SpecializedAmazonSection() {
                       key={st}
                       variants={pop}
                       whileHover={reduce ? undefined : { scale: 1.05, y: -4, rotate: i === 1 ? 0 : i === 0 ? -1.5 : 1.5 }}
-                      className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/6 p-4 text-center sm:p-5"
+                      className="relative overflow-hidden rounded-2xl border border-[#0b2a5b]/10 bg-white p-4 text-center shadow-md shadow-[#0b2a5b]/8 sm:p-5"
                     >
-                      <div className="text-[11px] font-bold text-[#ff9a8a]">METRIC 0{i + 1}</div>
-                      <div className={`${display.className} mt-1 text-lg font-bold text-white sm:text-xl`}>{st}</div>
+                      <div className="text-[11px] font-bold text-[#2563eb]">METRIC 0{i + 1}</div>
+                      <div className={`${display.className} mt-1 text-lg font-bold text-[#0b2a5b] sm:text-xl`}>{st}</div>
                     </motion.li>
                   ))}
                 </motion.ul>
 
                 {/* footer */}
-                <div className="flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-6 lg:col-span-12">
-                  <span className="flex items-center gap-2 text-xs font-bold text-[#d9d5ff]">
+                <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[#0b2a5b]/10 pt-6 lg:col-span-12">
+                  <span className="flex items-center gap-2 text-xs font-bold text-[#3b5b8c]">
                     <motion.span aria-hidden="true" className="flex" animate={reduce ? undefined : { y: [0, -5, 0] }} transition={{ duration: 1.1, repeat: Infinity, repeatDelay: 0.8 }}>
-                      <Zap size={16} className="text-[#ffb86b]" />
+                      <Zap size={16} className="text-[#0284c7]" />
                     </motion.span>
                     Status: Verified Secure
                   </span>
@@ -654,7 +752,7 @@ export default function SpecializedAmazonSection() {
                     whileHover={reduce ? undefined : { scale: 1.07 }}
                     whileTap={reduce ? undefined : { scale: 0.92 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 14 }}
-                    className="group relative inline-flex min-h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-[#ff5c7a] px-8 text-sm font-bold text-white shadow-lg shadow-[#ff5c7a]/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5cf2c1] min-[480px]:w-auto"
+                    className="group relative inline-flex min-h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-[#2563eb] px-8 text-sm font-bold text-white shadow-lg shadow-[#2563eb]/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4f46e5] min-[480px]:w-auto"
                   >
                     {!reduce && (
                       <motion.span
